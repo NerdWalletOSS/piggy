@@ -1,0 +1,9 @@
+rootProject.name = 'PiggyDemo'
+
+include ':app'
+
+include ':react-native-piggy'
+project(':react-native-piggy').projectDir = new File(rootProject.projectDir, '../../lib/android/library')
+
+include ':react-native-get-random-values'
+project(':react-native-get-random-values').projectDir = new File(rootProject.projectDir,'../../node_modules/react-native-get-random-values/android')

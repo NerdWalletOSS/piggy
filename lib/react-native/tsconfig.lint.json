@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "declaration": false,
+    "diagnostics": false
+  },
+  "include": ["lib/src/**/*", "demo/src/**/*"]
+}

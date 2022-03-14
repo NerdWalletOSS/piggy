@@ -1,0 +1,15 @@
+.DS_Store
+.nyc-output
+/build
+/configs
+/coverage
+/dist
+/node_modules
+/android
+/ios
+/lib/ios/Pods
+/lib/ios/PiggyKit.xcworkspace/xcuserdata
+/demo/ios/Pods
+/demo/ios/PiggyDemo.xcworkspace/xcuserdata
+npm-debug.log
+/lib/src/smart-circular.js

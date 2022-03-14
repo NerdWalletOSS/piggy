@@ -1,0 +1,43 @@
+MODULES_PATH = "../../node_modules"
+RN_PATH = "#{MODULES_PATH}/react-native"
+
+platform :ios, '11.0'
+use_frameworks!
+inhibit_all_warnings!
+install! 'cocoapods',
+         generate_multiple_pod_projects: false,
+         lock_pod_sources: false
+
+# CocoaPods analytics sends network stats synchronously affecting build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+require_relative "#{RN_PATH}/scripts/react_native_pods"
+require_relative "#{MODULES_PATH}/@react-native-community/cli-platform-ios/native_modules"
+
+def shared_pods
+  pod 'Starscream', '~> 3.1.0'
+  pod 'CocoaAsyncSocket', '~> 7.6.3'
+  pod 'Flipper-PeerTalk', '~> 0.0.4'
+end
+
+workspace 'PiggyDemo'
+
+target 'PiggyDemo' do
+  use_react_native!(:path => RN_PATH)
+  shared_pods
+  use_native_modules!
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end
+
+target 'PiggyKit' do
+  project '../../lib/ios/PiggyKit'
+  use_react_native!(:path => RN_PATH)
+  shared_pods
+
+  target 'PiggyKitTests' do
+    inherit! :complete
+  end
+end

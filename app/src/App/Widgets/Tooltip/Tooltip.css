@@ -1,0 +1,33 @@
+.rc-tooltip-arrow {
+  border-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-top-color: transparent !important;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+.rc-tooltip-placement-bottom,
+.rc-tooltip-placement-top {
+  padding: 4px 0 4px 0;
+}
+
+.rc-tooltip-placement-top,
+.rc-tooltip-placement-topLeft,
+.rc-tooltip-placement-topRight,
+.rc-tooltip-placement-bottom,
+.rc-tooltip-placement-bottomLeft,
+.rc-tooltip-placement-bottomRight,
+.rc-tooltip-placement-right,
+.rc-tooltip-placement-left {
+  padding: 0 4px 0 4px;
+}
+
+.rc-tooltip-inner {
+  min-height: auto;
+  color: #ebdbb2;
+  border: 1px solid #928374;
+  padding: 4px 8px;
+  box-shadow: 0px 0px 8px #000;
+  width: auto;
+  white-space: nowrap;
+}

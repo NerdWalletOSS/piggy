@@ -1,0 +1,142 @@
+{
+  "name": "piggy",
+  "productName": "piggy",
+  "version": "0.21.0",
+  "description": "Tooling for mobile developers",
+  "license": "MIT",
+  "author": {
+    "name": "NerdWallet",
+    "email": "piggy@nerdwallet.com"
+  },
+  "private": true,
+  "dependencies": {
+    "@devicefarmer/adbkit": "^3.2.1",
+    "body-parser": "^1.19.0",
+    "electron-default-menu": "^1.0.2",
+    "electron-is-dev": "^2.0.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "express": "^4.17.1",
+    "express-ws": "^5.0.2",
+    "flat": "^5.0.2",
+    "js-worker-search": "^1.4.1",
+    "lodash": "^4.17.21",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/runtime": "^7.17.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-brands-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.15",
+    "aphrodite": "^2.4.0",
+    "color-manipulate": "^1.0.1",
+    "color-measure": "^1.0.1",
+    "color2": "^1.0.8",
+    "concurrently": "^3.5.1",
+    "electron": "^13.0.1",
+    "electron-builder": "^22.10.5",
+    "electron-devtools-installer": "^3.1.1",
+    "electron-notarize": "^1.1.1",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.23.2",
+    "moment": "^2.29.1",
+    "node-fetch": "^2.6.0",
+    "prettier": "^2.1.1",
+    "prettier-eslint": "^12.0.0",
+    "prop-types": "^15.7.2",
+    "rc-tooltip": "^5.1.1",
+    "react": "^17.0.2",
+    "react-app-rewired": "^2.1.8",
+    "react-dom": "^17.0.2",
+    "react-hotkeys": "^2.0.0",
+    "react-json-view": "https://github.com/clangen-nw/react-json-view/releases/download/1.19.8/react-json-view-1.19.8.tgz",
+    "react-measure": "^2.5.2",
+    "react-resize-observer": "^1.1.1",
+    "react-responsive-modal": "^3.6.0",
+    "react-scripts": "5.0.0",
+    "react-splitter-layout": "^4.0.0",
+    "react-toastify": "^5.5.0",
+    "react-virtualized-auto-sizer": "^1.0.5",
+    "react-virtuoso": "2.8.0",
+    "react-window": "git+https://github.com/bvaughn/react-window.git#13d48ad",
+    "request": "^2.88.2",
+    "uuid": "^3.4.0",
+    "vis": "^4.21.0",
+    "wait-on": "^2.1.0"
+  },
+  "homepage": "./",
+  "main": "public/electron.js",
+  "scripts": {
+    "start": "concurrently \"sh -c 'BROWSER=none yarn start-react'\" \"wait-on http://localhost:3000 && electron .\"",
+    "start-react": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "clean": "bash ./script/clean.sh",
+    "forwarder:build": "bash ./script/build-forwarder.sh",
+    "forwarder:run": "./public/forwarder",
+    "release": "bash ./script/build-forwarder.sh && bash ./script/build-release.sh",
+    "install-patch": "yarn && bash ./script/patch-modules.sh",
+    "patch": "bash ./script/patch-modules.sh",
+    "package": "electron-builder build --publish never",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject",
+    "lint": "eslint . --ignore-path .gitignore --ext .js --ext .jsx",
+    "lint-file": "eslint --ext .js --ext .jsx",
+    "lint-fix": "yarn run lint -- --fix"
+  },
+  "build": {
+    "appId": "com.nerdwallet.piggy",
+    "copyright": "Copyright © 2019-2022 NerdWallet, Inc.",
+    "afterSign": "script/notarize.js",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": true,
+      "entitlements": "script/entitlements.mac.plist",
+      "entitlementsInherit": "script/entitlements.mac.plist"
+    },
+    "files": [
+      "build/**/*"
+    ],
+    "extraFiles": [
+      {
+        "from": "resources/config",
+        "to": "Resources/config",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "resources/mac/bin",
+        "to": "Resources/bin",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "resources/win/bin",
+        "to": "Resources/bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "directories": {
+      "buildResources": "public"
+    }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

@@ -1,0 +1,26 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath('com.android.tools.build:gradle:7.0.4')
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        google()
+        maven { url "$rootDir/../../node_modules/react-native/android" }
+        mavenCentral {
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
+    }
+}
