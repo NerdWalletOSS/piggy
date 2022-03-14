@@ -68,11 +68,11 @@ While developing apps that use Redux it can often be useful to be notified when 
 
 Connecting to and debugging on physical devices can be annoying (and in some cases difficult), especially for developers without a lot of experience with pure-native development. The **Devices** tab in the tool has a couple nifty features to aide development on both iOS and Android hardware.
 
-### Connected Clients and the Blacklist
+### Connected Clients and the Blocklist
 
 The `Connected Clients` section can be used to see which devices are connected to the tooling. The device type, followed by an IP address, then a `device identifier` is displayed for each connected client.
 
-Sometimes, especially in automation environments, it may be useful to disallow specific devices from connecting to the tool. For these cases, devices can be blacklisted by `device identifier`.
+Sometimes, especially in automation environments, it may be useful to disallow specific devices from connecting to the tool. For these cases, devices can be blocklisted by `device identifier`.
 
 ![screenshot-devices](/doc/images/screenshot-devices.png?raw=true 'Event Log with data inspection.')
 
