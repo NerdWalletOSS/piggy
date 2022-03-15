@@ -82,7 +82,7 @@
     "clean": "bash ./script/clean.sh",
     "forwarder:build": "bash ./script/build-forwarder.sh",
     "forwarder:run": "./public/forwarder",
-    "release": "bash ./script/build-forwarder.sh && bash ./script/build-release.sh",
+    "release": "bash ./script/build-release.sh",
     "install-patch": "yarn && bash ./script/patch-modules.sh",
     "patch": "bash ./script/patch-modules.sh",
     "package": "electron-builder build --publish never",
