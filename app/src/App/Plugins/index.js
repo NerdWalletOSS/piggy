@@ -6,10 +6,10 @@ let externalPlugins;
 const resolveExternalPlugins = () => {
   if (!externalPlugins) {
     try {
-      /* eslint-disable-next-line */
-      const resolveExternalPlugins = require('./External/index.js').default;
-      if (_.isFunction(resolveExternalPlugins)) {
-        externalPlugins = resolveExternalPlugins();
+      // eslint-disable-next-line
+      const resolvePlugins = require('./External/index.js').default;
+      if (_.isFunction(resolvePlugins)) {
+        externalPlugins = resolvePlugins();
         if (!_.isArray(externalPlugins)) {
           externalPlugins = [];
         } else {
