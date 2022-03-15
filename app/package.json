@@ -101,7 +101,13 @@
       "hardenedRuntime": true,
       "gatekeeperAssess": true,
       "entitlements": "script/entitlements.mac.plist",
-      "entitlementsInherit": "script/entitlements.mac.plist"
+      "entitlementsInherit": "script/entitlements.mac.plist",
+      "bundleVersion": "dev",
+      "target": [
+        "zip"
+      ],
+      "type": "distribution",
+      "artifactName": "${name}-${version}-${os}.${ext}"
     },
     "files": [
       "build/**/*"
