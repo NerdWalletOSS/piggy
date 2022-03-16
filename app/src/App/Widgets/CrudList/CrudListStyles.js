@@ -13,8 +13,6 @@ const styles = StyleSheet.create({
     border: `1px solid ${colors.border}`,
     flexGrow: 0,
     borderRadius: 4,
-    marginBottom: 8,
-    margin: 8,
   },
   crudListHeader: {
     backgroundColor: colors.titleBackground,
@@ -35,6 +33,8 @@ const styles = StyleSheet.create({
     padding: '4px 0px',
     boxShadow: `inset 0px 0px 4px 4px #0002`,
     flex: '1',
+    overflowX: 'hidden',
+    overflowY: 'auto',
   },
   crudListRow: {
     display: 'flex',

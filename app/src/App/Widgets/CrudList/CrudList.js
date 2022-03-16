@@ -62,8 +62,6 @@ const CrudRow = ({
     (event) => {
       if (event.key === 'Enter') {
         commitOrRollBack(index, editedValue.current);
-        event.stopPropagation();
-        event.preventDefault();
       }
     },
     [index, editedValue, commitOrRollBack]
@@ -189,7 +187,7 @@ const CrudList = ({ title, data, saveData, placeholder }) => {
 
   return (
     <div className={css(styles.crudList)}>
-      <div className={css(styles.crudListHeader)}>{title}</div>
+      {title && <div className={css(styles.crudListHeader)}>{title}</div>}
       <div className={css(styles.crudContentWrapper)}>
         <div className={css(styles.crudListContent)}>{rows}</div>
         <div className={css(styles.crudListFooter)}>
