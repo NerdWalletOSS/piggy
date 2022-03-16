@@ -1,5 +1,9 @@
 import { StyleSheet } from 'aphrodite/no-important';
-import colors, { overlayColor, offsetColor } from '@lib/colors';
+import colors, {
+  overlayColor,
+  offsetColor,
+  makeTransparent,
+} from '@lib/colors';
 import { createColorizedRowStyle } from '@widgets/StyleGenerators';
 
 const styles = StyleSheet.create({
@@ -45,7 +49,11 @@ const styles = StyleSheet.create({
     },
     outline: 'none',
   },
+  crudListRowEmpty: {
+    color: makeTransparent(colors.foreground, 0.5),
+  },
   crudListRowSelected: createColorizedRowStyle(colors.cyan, 'solid'),
+  crudListRowEditing: createColorizedRowStyle(colors.yellow, 'dashed'),
   buttonStyleOverrides: {
     margin: 0,
     marginBottom: 4,

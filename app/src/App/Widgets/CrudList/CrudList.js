@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { usePrevious } from '@lib/hooks';
 import PropTypes from 'prop-types';
 import Button, { BUTTON_THEME } from '@widgets/Button/Button';
 import ContentEditable from 'react-contenteditable';
@@ -23,8 +24,13 @@ const CrudRow = ({
 }) => {
   /* must use `useRef` and not `useState`. see:
   https://github.com/lovasoa/react-contenteditable/issues/161#issue-434981637 */
-  const editedValue = useRef('');
+  const editedValue = useRef(`${item}`);
   const [domRef, setDomRef] = useState(null);
+  const [isEditable, setIsEditable] = useState(false);
+  const prevSelected = usePrevious(selected);
+  if (!prevSelected && selected && !isEditable && !editedValue.current) {
+    setIsEditable(true);
+  }
   useMemo(() => {
     editedValue.current = `${item}`;
   }, [item]);
@@ -41,43 +47,69 @@ const CrudRow = ({
       if (!v || (commitEdit && !commitEdit(i, v))) {
         editedValue.current = item;
       }
+      setIsEditable(false);
     },
-    [item, commitEdit, editedValue]
+    [item, commitEdit, editedValue, setIsEditable]
   );
-  const onBlur = useCallback(() => {
+  const handleBlur = useCallback(() => {
     commitOrRollBack(index, editedValue.current);
-  }, [index, editedValue, commitOrRollBack]);
-  const onFocus = useCallback(() => setSelectedIndex(index), [
-    setSelectedIndex,
-    index,
-  ]);
-  const onKeyUp = useCallback(
+    setIsEditable(false);
+  }, [index, editedValue, commitOrRollBack, setIsEditable]);
+  const handleFocus = useCallback(() => {
+    setSelectedIndex(index);
+  }, [setSelectedIndex, index]);
+  const handleKeyDown = useCallback(
     (event) => {
       if (event.key === 'Enter') {
         commitOrRollBack(index, editedValue.current);
+        event.stopPropagation();
+        event.preventDefault();
       }
     },
     [index, editedValue, commitOrRollBack]
   );
-  const onChange = useCallback(
+  const handleEditableInputChange = useCallback(
     (event) => {
       editedValue.current = event.currentTarget.textContent;
     },
     [editedValue]
   );
+  const handleNonEditableClick = useCallback(() => {
+    if (selected) {
+      setIsEditable(true);
+    } else {
+      setIsEditable(false);
+      setSelectedIndex(index);
+    }
+  }, [index, selected, setSelectedIndex, setIsEditable]);
+  const className = useMemo(
+    () =>
+      css(
+        styles.crudListRow,
+        !editedValue.current && !isEditable ? styles.crudListRowEmpty : null,
+        selected ? styles.crudListRowSelected : null,
+        isEditable ? styles.crudListRowEditing : null
+      ),
+    [selected, isEditable, editedValue]
+  );
+  if (!isEditable) {
+    return (
+      <div className={className} onClick={handleNonEditableClick}>
+        {editedValue.current || placeholder}
+      </div>
+    );
+  }
   return (
     <ContentEditable
       innerRef={setDomRef}
       html={editedValue.current}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onKeyUp={onKeyUp}
-      onChange={onChange}
+      disabled={!isEditable}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      onChange={handleEditableInputChange}
       placeholder={placeholder || DEFAULT_PLACEHOLDER}
-      className={css(
-        styles.crudListRow,
-        selected ? styles.crudListRowSelected : null
-      )}
+      className={className}
     />
   );
 };
