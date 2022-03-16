@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   crudListContent: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: '4px 0px',
     boxShadow: `inset 0px 0px 4px 4px #0002`,
     flex: '1',
@@ -54,6 +56,12 @@ const styles = StyleSheet.create({
   },
   crudListRowSelected: createColorizedRowStyle(colors.cyan, 'solid'),
   crudListRowEditing: createColorizedRowStyle(colors.yellow, 'dashed'),
+  emptyLabel: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   buttonStyleOverrides: {
     margin: 0,
     marginBottom: 4,

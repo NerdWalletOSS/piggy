@@ -125,7 +125,7 @@ CrudRow.defaultProps = {
   placeholder: '',
 };
 
-const CrudList = ({ title, data, saveData, placeholder }) => {
+const CrudList = ({ title, data, saveData, placeholder, emptyText }) => {
   const [selectedIndex, setSelectedIndex] = useState(data?.length ? 0 : -1);
   const [editedItems, setEditedItems] = useState([...data]);
 
@@ -159,6 +159,15 @@ const CrudList = ({ title, data, saveData, placeholder }) => {
     ]
   );
 
+  const empty = useMemo(
+    () => (
+      <div className={css(styles.emptyLabel)}>
+        <div>{emptyText}</div>
+      </div>
+    ),
+    [emptyText]
+  );
+
   const handleSave = useCallback(() => {
     if (saveData) {
       const result = saveData(editedItems);
@@ -189,7 +198,9 @@ const CrudList = ({ title, data, saveData, placeholder }) => {
     <div className={css(styles.crudList)}>
       {title && <div className={css(styles.crudListHeader)}>{title}</div>}
       <div className={css(styles.crudContentWrapper)}>
-        <div className={css(styles.crudListContent)}>{rows}</div>
+        <div className={css(styles.crudListContent)}>
+          {rows.length ? rows : empty}
+        </div>
         <div className={css(styles.crudListFooter)}>
           <Button
             style={styles.buttonStyleOverrides}
@@ -221,14 +232,17 @@ const CrudList = ({ title, data, saveData, placeholder }) => {
 
 CrudList.propTypes = {
   title: PropTypes.string,
-  data: PropTypes.arrayOf(PropTypes.any).isRequired,
+  data: PropTypes.arrayOf(PropTypes.any),
   saveData: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
+  emptyText: PropTypes.string,
 };
 
 CrudList.defaultProps = {
+  data: [],
   title: null,
   placeholder: DEFAULT_PLACEHOLDER,
+  emptyText: '',
 };
 
 export default CrudList;
