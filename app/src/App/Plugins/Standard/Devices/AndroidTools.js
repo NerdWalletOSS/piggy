@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'aphrodite/no-important';
 import { faPlug } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,8 +13,6 @@ import {
   getDevicesSetting,
   setDevicesSetting,
 } from './DevicesSettings';
-
-console.log(DEVICE_SETTINGS_KEYS);
 
 const { adbkit } = global.ipc;
 
@@ -43,7 +42,6 @@ export default class AndroidTools extends PureComponent {
       autoConnect: getDevicesSetting(
         DEVICE_SETTINGS_KEYS.AUTO_CONNECT_ANDROID_DEVICES
       ),
-      forwardedPorts: getDevicesSetting(DEVICE_SETTINGS_KEYS.FORWARDED_PORTS),
     };
   }
 
@@ -77,7 +75,8 @@ export default class AndroidTools extends PureComponent {
   };
 
   handleConnect = async () => {
-    const { deviceId, forwardedPorts } = this.state;
+    const { forwardedPorts } = this.props;
+    const { deviceId } = this.state;
     const device = this.adb.getDevice(deviceId);
     if (device) {
       try {
@@ -193,7 +192,6 @@ export default class AndroidTools extends PureComponent {
   renderDeviceRows = (devices, reverses, deviceId, buttonsEnabled) => {
     let rows;
     if (devices.length) {
-      const { forwardedPorts } = this.state;
       rows = devices.map((device) => {
         const { id } = device;
         const selected = id === deviceId;
@@ -212,8 +210,7 @@ export default class AndroidTools extends PureComponent {
             <FontAwesomeIcon
               className={css(
                 styles.devicesRowIcon,
-                reversesForDevice.length !== forwardedPorts.length &&
-                  styles.devicesRowIconDisabled
+                reversesForDevice.length <= 0 && styles.devicesRowIconDisabled
               )}
               icon={faPlug}
               fixedWidth
@@ -239,7 +236,8 @@ export default class AndroidTools extends PureComponent {
 
   render = () => {
     const { devices, reverses } = this.context;
-    const { deviceId, autoConnect, forwardedPorts } = this.state;
+    const { forwardedPorts } = this.props;
+    const { deviceId, autoConnect } = this.state;
 
     const buttonsEnabled = !!deviceId;
     const buttonClass = css([
@@ -254,8 +252,8 @@ export default class AndroidTools extends PureComponent {
       return acc;
     }, 0);
 
-    const isSelectedDeviceConnected =
-      (reverses[deviceId] || []).length === forwardedPorts.length;
+    const reversesForSelectedDevice = reverses[deviceId] || [];
+    const isSelectedDeviceConnected = reversesForSelectedDevice.length > 0;
 
     const rows = this.renderDeviceRows(
       devices,
@@ -264,8 +262,10 @@ export default class AndroidTools extends PureComponent {
       buttonsEnabled
     );
 
-    const portChips = forwardedPorts.map((port) => (
-      <div className={css(styles.devicesRowChip)}>{`${port}`}</div>
+    const portChips = reversesForSelectedDevice.map((port) => (
+      <div className={css(styles.devicesRowChip)}>{`${
+        port.remote.split(':')[1]
+      }`}</div>
     ));
 
     return (
@@ -317,5 +317,9 @@ export default class AndroidTools extends PureComponent {
     );
   };
 }
+
+AndroidTools.propTypes = {
+  forwardedPorts: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 AndroidTools.contextType = BackendContext;

@@ -63,19 +63,6 @@ const getPathToBinary = (name) => {
   return fs.existsSync(fn) && fn;
 };
 
-const getPathToResource = (type, name) => {
-  /* note almost exactly the same as `getPathToBinary()` but is not platform specific.
-  although a couple of these lines are copy/pasted, this seems cleaner than trying
-  to have one uber smart function */
-  const root = process.cwd();
-  const { isPackaged, getAppPath } = remote.app;
-  const resourcePath = isPackaged
-    ? path.join(path.dirname(getAppPath()), '..', './Resources', `./${type}`)
-    : path.join(root, './resources', `./${type}`);
-  const fn = path.resolve(path.join(resourcePath, `./${name}`));
-  return fs.existsSync(fn) && fn;
-};
-
 /*
  * begin gross code to locate adb
  */

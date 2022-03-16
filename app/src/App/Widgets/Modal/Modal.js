@@ -23,7 +23,14 @@ TitleButton.defaultProps = {
   onClick: null,
 };
 
-const Modal = ({ title, children, styleOverrides, onClose, ...restProps }) => (
+const Modal = ({
+  title,
+  children,
+  styleOverrides,
+  contentStyleOverrides,
+  onClose,
+  ...restProps
+}) => (
   <BaseModal
     showCloseIcon={false}
     {...restProps}
@@ -34,7 +41,9 @@ const Modal = ({ title, children, styleOverrides, onClose, ...restProps }) => (
       <div className={css(styles.modalTitle)}>{title}</div>
       <TitleButton onClick={onClose} />
     </div>
-    <div className={css(styles.contents)}>{children}</div>
+    <div className={css(styles.contents)} style={contentStyleOverrides}>
+      {children}
+    </div>
   </BaseModal>
 );
 
@@ -46,6 +55,7 @@ Modal.propTypes = {
   title: PropTypes.string,
   onClose: PropTypes.func,
   styleOverrides: PropTypes.object,
+  contentStyleOverrides: PropTypes.object,
 };
 
 Modal.defaultProps = {
@@ -53,6 +63,7 @@ Modal.defaultProps = {
   title: '',
   onClose: null,
   styleOverrides: {},
+  contentStyleOverrides: {},
 };
 
 export default Modal;
