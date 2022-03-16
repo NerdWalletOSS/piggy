@@ -25,7 +25,8 @@ import SearchableDetailsPane, {
 } from '@widgets/SearchableDetailsPane/SearchableDetailsPane';
 import { contextMenu } from '@lib/dom';
 import EventLogVirtualList from '@plugins/Standard/EventLog/EventLogVirtualList';
-import { EditableList } from '@widgets/EditableList/EditableList';
+import Modal from '@widgets/Modal/Modal';
+import CrudList from '@widgets/CrudList/CrudList';
 import settings from '@app/Settings';
 import connectData from './DataWrapper';
 import styles from './EventLogStyles';
@@ -93,8 +94,12 @@ class EventLog extends PureComponent {
       urlModalData: null,
       showFiltersEvent: null,
       showDetailsSearch: false,
-      showSettingsEvent: false,
+      showSettingsModal: false,
       scrollPinnedToBottom: true,
+      userDefinedDataPaths: globalSettings.get(
+        'eventlog.searchSettings.userDefinedDataPaths',
+        []
+      ),
       filter: '',
     };
     this.keyHandlers = {
@@ -222,35 +227,47 @@ class EventLog extends PureComponent {
     this.setState({ showFiltersEvent: { x: ev.clientX, y: ev.clientY } });
   };
 
-  saveUserDefinedDataPaths = (userDefinedDataPaths) => {
-    globalSettings.set(
-      'eventlog.searchSettings.userDefinedDataPaths',
-      userDefinedDataPaths
-    );
-  };
-
-  loadUserDefinedDataPaths = () =>
-    globalSettings.get('eventlog.searchSettings.userDefinedDataPaths', []);
-
   toggleSettings = () => {
     this.setState((prevState) => ({
-      showSettingsEvent: !prevState.showSettingsEvent,
+      showSettingsModal: !prevState.showSettingsModal,
     }));
   };
 
   renderSettings = () => {
-    const { showSettingsEvent } = this.state;
-    if (!showSettingsEvent) {
+    const { showSettingsModal, userDefinedDataPaths } = this.state;
+    if (!showSettingsModal) {
       return null;
     }
+    const handleModalClose = () => {
+      this.setState({
+        showSettingsModal: false,
+      });
+    };
+    const handleCrudSave = (list) => {
+      const compacted = _.compact(list);
+      globalSettings.set(
+        'eventlog.searchSettings.userDefinedDataPaths',
+        compacted
+      );
+      this.setState({
+        userDefinedDataPaths: compacted,
+        showSettingsModal: false,
+      });
+      return compacted;
+    };
     return (
-      <EditableList
-        loadItems={this.loadUserDefinedDataPaths}
-        syncItems={this.saveUserDefinedDataPaths}
-        modalTitle="add path to data for data section"
-        listHeaderTitle="data sections"
-        placeholderText="path to data for data section"
-      />
+      <Modal
+        title="configure data sections"
+        onClose={handleModalClose}
+        open={showSettingsModal}
+        contentStyleOverrides={{ padding: 0 }}
+      >
+        <CrudList
+          data={userDefinedDataPaths}
+          saveData={handleCrudSave}
+          emptyText="no data paths added"
+        />
+      </Modal>
     );
   };
 
@@ -432,13 +449,12 @@ class EventLog extends PureComponent {
       return left;
     }
     return (
-      <SplitterLayout vertical secondaryInitialSize={80} percentage>
-        {this.renderSettings()}
+      <div>
         <SplitterLayout secondaryInitialSize={33} percentage>
           {left}
           {right}
         </SplitterLayout>
-      </SplitterLayout>
+      </div>
     );
   };
 
@@ -462,9 +478,8 @@ class EventLog extends PureComponent {
   };
 
   renderDetails = () => {
-    const { detailsData, showDetailsSearch } = this.state;
+    const { detailsData, showDetailsSearch, userDefinedDataPaths } = this.state;
     const showTitle = detailsData?.showTitle ?? false;
-    const userDefinedDataPaths = this.loadUserDefinedDataPaths();
     const searchConfig = {
       detailSectionPaths: userDefinedDataPaths.length
         ? userDefinedDataPaths
@@ -496,9 +511,9 @@ class EventLog extends PureComponent {
           title="event log"
           toolbarComponents={this.renderToolbarComponents()}
         >
+          {this.renderSettings()}
           <div className={css(styles.EventLog)}>
             {urlModalData && this.renderUrlMenu()}
-            {!count && this.renderSettings()}
             {count
               ? this.renderMainContent(
                   this.renderList(count),
