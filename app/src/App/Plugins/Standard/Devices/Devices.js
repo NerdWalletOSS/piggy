@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { css } from 'aphrodite/no-important';
 import PluginLayout from '@widgets/Plugin/PluginLayout';
 import { Toolbar, ToolbarIcon } from '@widgets/Toolbar';
-import Modal from '@widgets/Modal/Modal';
 import CrudList from '@widgets/CrudList/CrudList';
 import { faUsb } from '@fortawesome/free-brands-svg-icons';
 import styles from './DevicesStyles';
@@ -49,14 +48,14 @@ export default class Devices extends PureComponent {
       return parsed;
     };
     return (
-      <Modal
+      <CrudList.Modal
         title="configure forwarded ports"
         onClose={this.handleForwardedPortsModalClose}
         open={this.state.showForwardedPortsModal}
         contentStyleOverrides={{ padding: 0 }}
-      >
-        <CrudList data={forwardedPorts} saveData={handleCrudSave} />
-      </Modal>
+        data={forwardedPorts}
+        saveData={handleCrudSave}
+      />
     );
   };
 

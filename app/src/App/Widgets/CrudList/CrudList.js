@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { usePrevious } from '@lib/hooks';
 import PropTypes from 'prop-types';
+import Modal from '@widgets/Modal/Modal';
 import Button, { BUTTON_THEME } from '@widgets/Button/Button';
 import ContentEditable from 'react-contenteditable';
 import { css } from 'aphrodite/no-important';
@@ -243,6 +244,35 @@ CrudList.defaultProps = {
   title: null,
   placeholder: DEFAULT_PLACEHOLDER,
   emptyText: '',
+};
+
+CrudList.Modal = ({
+  title,
+  onClose,
+  styleOverrides,
+  contentStyleOverrides,
+  open,
+  ...props
+}) => (
+  <Modal
+    title={title}
+    onClose={onClose}
+    styleOverrides={styleOverrides}
+    contentStyleOverrides={contentStyleOverrides}
+    open={open}
+  >
+    <CrudList {...props} />
+  </Modal>
+);
+
+CrudList.Modal.propTypes = {
+  ...CrudList.propTypes,
+  ...Modal.propTypes,
+};
+
+CrudList.Modal.defaultProps = {
+  ...CrudList.defaultProps,
+  ...Modal.defaultProps,
 };
 
 export default CrudList;

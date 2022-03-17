@@ -25,7 +25,6 @@ import SearchableDetailsPane, {
 } from '@widgets/SearchableDetailsPane/SearchableDetailsPane';
 import { contextMenu } from '@lib/dom';
 import EventLogVirtualList from '@plugins/Standard/EventLog/EventLogVirtualList';
-import Modal from '@widgets/Modal/Modal';
 import CrudList from '@widgets/CrudList/CrudList';
 import settings from '@app/Settings';
 import connectData from './DataWrapper';
@@ -256,18 +255,15 @@ class EventLog extends PureComponent {
       return compacted;
     };
     return (
-      <Modal
+      <CrudList.Modal
         title="configure data sections"
         onClose={handleModalClose}
         open={showSettingsModal}
         contentStyleOverrides={{ padding: 0 }}
-      >
-        <CrudList
-          data={userDefinedDataPaths}
-          saveData={handleCrudSave}
-          emptyText="no data paths added"
-        />
-      </Modal>
+        data={userDefinedDataPaths}
+        saveData={handleCrudSave}
+        emptyText="no data paths added"
+      />
     );
   };
 
