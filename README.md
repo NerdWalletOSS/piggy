@@ -8,6 +8,8 @@
 
 This repository provides both a [stand-alone Electron app](https://github.com/NerdWalletOSS/piggy/tree/main/app/), and a reference implementation of a [client-side library](https://github.com/NerdWalletOSS/piggy/tree/main/lib/react-native) for use with [React Native](https://reactnative.dev/). Eventually, libraries for different languages or runtimes may be included.
 
+> If you want to get up and running with React Native quickly, please refer to the [integration guide](https://github.com/NerdWalletOSS/piggy/tree/main/lib/react-native).
+
 While it does provide some useful functionality out of the box, it's best to think of `piggy` as a straightforward, pre-configured, non-opinionated playground that uses [Electron](https://www.electronjs.org/) and [React](https://reactjs.org/) to communicate with your applications using [WebSockets](https://developer.mozilla.org/en-US/doc/Web/API/WebSockets_API); stream data to `piggy`, grab it from the WebSocket, and display it in a React component however you want.
 
 While [similar projects](https://github.com/facebook/flipper) exist, they tend to have more ambitious goals: extension bundling, publishing, sharing, etc. That's great for certain classes of tooling, but also introduces a more complicated architecture that can be time consuming or intimidating to integrate against, especially if you just need to build a few one-off, in-house tools.
