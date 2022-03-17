@@ -1,8 +1,8 @@
 # Overview
 
-`@nerdwallet/react-native-piggy` is a library used in tandem with [piggy](https://github.com/NerdWallet/piggy) to help developers debug certain classes of problems commonly encountered while developing frontend applications.
+`@nerdwallet/react-native-piggy` is a library used in tandem with [piggy](https://github.com/NerdWalletOSS/piggy) to help developers debug certain classes of problems commonly encountered while developing frontend applications.
 
-For more information about the tool itself, check out the [piggy](https://github.com/NerdWallet/piggy) project.
+For more information about the tool itself, check out the [piggy](https://github.com/NerdWalletOSS/piggy) project.
 
 Let's see how `@nerdwallet/react-native-piggy` can be integrated into your project.
 

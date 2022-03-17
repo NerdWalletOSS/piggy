@@ -1,4 +1,4 @@
-#  piggy
+# piggy
 
 <img src="/app/public/icon.png" alt="piggy icon" width="100" height="100">
 
@@ -6,7 +6,7 @@
 
 `piggy` aims to be a simple sandbox for developers who want a quick way to create custom tooling for their own projects.
 
-This repository provides both a [stand-alone Electron app](https://github.com/NerdWallet/piggy/tree/main/app/), and a reference implementation of a [client-side library](https://github.com/NerdWallet/piggy/tree/main/lib/react-native) for use with [React Native](https://reactnative.dev/). Eventually, libraries for different languages or runtimes may be included.
+This repository provides both a [stand-alone Electron app](https://github.com/NerdWalletOSS/piggy/tree/main/app/), and a reference implementation of a [client-side library](https://github.com/NerdWalletOSS/piggy/tree/main/lib/react-native) for use with [React Native](https://reactnative.dev/). Eventually, libraries for different languages or runtimes may be included.
 
 While it does provide some useful functionality out of the box, it's best to think of `piggy` as a straightforward, pre-configured, non-opinionated playground that uses [Electron](https://www.electronjs.org/) and [React](https://reactjs.org/) to communicate with your applications using [WebSockets](https://developer.mozilla.org/en-US/doc/Web/API/WebSockets_API); stream data to `piggy`, grab it from the WebSocket, and display it in a React component however you want.
 
@@ -15,9 +15,9 @@ While [similar projects](https://github.com/facebook/flipper) exist, they tend t
 That said, we do believe that the stock version of `piggy` can be immediately useful to some [React Native]() developers, so notarized binaries are provided in the [Releases]() section of this project, and the client-side React Native library is available via [npmjs.com]().
 
 Let's take a quick look at the `piggy` UI:
-![screenshot-timeline-collapsed](/doc/images/screenshot-timeline-collapsed.png?raw=true 'Timeline with details and idle time collapsed.')
+![screenshot-timeline-collapsed](/doc/images/screenshot-timeline-collapsed.png?raw=true "Timeline with details and idle time collapsed.")
 
-You can add your own tooling to the left bar by simply dropping some source files in the correct directory and reloading the app. The plugins in the screenshot are included in the [app/App/Plugins/Standard](https://github.com/NerdWallet/piggy/tree/main/app/src/App/Plugins/Standard) directory as examples. If you want to learn more about writing your own tools, please see the [custom plugin documentation](/doc/custom-plugins.md).
+You can add your own tooling to the left bar by simply dropping some source files in the correct directory and reloading the app. The plugins in the screenshot are included in the [app/App/Plugins/Standard](https://github.com/NerdWalletOSS/piggy/tree/main/app/src/App/Plugins/Standard) directory as examples. If you want to learn more about writing your own tools, please see the [custom plugin documentation](/doc/custom-plugins.md).
 
 Due to the (lack of) architecture, your plugins just become part of the app. There are no sandboxing rules between plugins, and your code has access to all of the app internals. Again, this design decision is intentional. `piggy` plugins are not necessarily meant to be shared and published to the world, they are supposed to be tools that help **you** build **your** app, filling in gaps that may exist with existing solutions.
 
@@ -37,9 +37,9 @@ The Timeline plugin can be used to:
 - Spot certain classes of unexpected behavior that may not result in errors.
 - Generally understand how the app works, at a high level.
 
-![screenshot-timeline-collapsed](/doc/images/screenshot-timeline-collapsed.png?raw=true 'Timeline with details and idle time collapsed.')
+![screenshot-timeline-collapsed](/doc/images/screenshot-timeline-collapsed.png?raw=true "Timeline with details and idle time collapsed.")
 
-![screenshot-timeline-expanded](/doc/images/screenshot-timeline-expanded.png?raw=true 'Timeline with details visible.')
+![screenshot-timeline-expanded](/doc/images/screenshot-timeline-expanded.png?raw=true "Timeline with details visible.")
 
 ## Event Log
 
@@ -56,13 +56,13 @@ As the app is used, the log is updated in real-time. It has a couple nice featur
 - Copy HTTP requests as cURL commands
 - Inspect the contents of Redux actions
 
-![screenshot-event-log](/doc/images/screenshot-event-log.png?raw=true 'Event Log with data inspection.')
+![screenshot-event-log](/doc/images/screenshot-event-log.png?raw=true "Event Log with data inspection.")
 
 ## State Subscriptions
 
 While developing apps that use Redux it can often be useful to be notified when global state changes. The State Subscriptions tab allows developers to monitor changes to slices in the store, in real time.
 
-![screenshot-state-subscriptions](/doc/images/screenshot-state-subscriptions.png?raw=true 'Event Log with data inspection.')
+![screenshot-state-subscriptions](/doc/images/screenshot-state-subscriptions.png?raw=true "Event Log with data inspection.")
 
 ## Device Management
 
@@ -74,7 +74,7 @@ The `Connected Clients` section can be used to see which devices are connected t
 
 Sometimes, especially in automation environments, it may be useful to disallow specific devices from connecting to the tool. For these cases, devices can be blocklisted by `device identifier`.
 
-![screenshot-devices](/doc/images/screenshot-devices.png?raw=true 'Event Log with data inspection.')
+![screenshot-devices](/doc/images/screenshot-devices.png?raw=true "Event Log with data inspection.")
 
 ### Android Devices
 
@@ -111,9 +111,9 @@ The current session can also be downloaded via local HTTP server, by simply maki
 
 # FAQ
 
-* Q: Does `piggy` only work with React Native apps?
-    * A: Nope! `piggy` doesn't care what type of client sends it data. However, at this time we are only providing a client side library for React Native because it's our main, in-house use case. That said, building bindings for other languages or runtimes should be relatively trivial; as mentioned before, if you can create a WebSocket in your app, you can use `piggy`.
-* Q: For React Native apps, why use `piggy` over other popular developer tools like React Native Debugger, Chrome DevTools, or Reactotron?
-    * A: We don't necessarily recommend using `piggy` **over** existing solutions; it's designed to complement existing tooling!
-* Q: Why is this project named "piggy"?
-    * A: `piggy` is short for "piggy bank," something cute and vaguely on-brand for our company and community. Also, I'm not good at naming things.
+- Q: Does `piggy` only work with React Native apps?
+  - A: Nope! `piggy` doesn't care what type of client sends it data. However, at this time we are only providing a client side library for React Native because it's our main, in-house use case. That said, building bindings for other languages or runtimes should be relatively trivial; as mentioned before, if you can create a WebSocket in your app, you can use `piggy`.
+- Q: For React Native apps, why use `piggy` over other popular developer tools like React Native Debugger, Chrome DevTools, or Reactotron?
+  - A: We don't necessarily recommend using `piggy` **over** existing solutions; it's designed to complement existing tooling!
+- Q: Why is this project named "piggy"?
+  - A: `piggy` is short for "piggy bank," something cute and vaguely on-brand for our company and community. Also, I'm not good at naming things.
