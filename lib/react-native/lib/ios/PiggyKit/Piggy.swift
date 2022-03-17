@@ -459,7 +459,7 @@ public class Piggy: NSObject {
         } else {
             return RCTBundleURLProvider
                 .sharedSettings()
-                .jsBundleURL(forBundleRoot: "index", fallbackResource: nil)
+                .jsBundleURL(forBundleRoot: "index", fallbackURLProvider: { nil })
         }
     }
 

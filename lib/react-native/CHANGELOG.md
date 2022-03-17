@@ -1,3 +1,7 @@
+## 1.8.2 (clangen)
+
+* Fix compability issues with React Native 0.68+
+
 ## 1.8.0 (clangen)
 
 * Dependency updates. 
