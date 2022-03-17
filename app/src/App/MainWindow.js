@@ -35,9 +35,9 @@ const MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
 const UPDATE_CHECK_INTERVAL = MILLISECONDS_PER_HOUR * 1;
 
 const UPDATE_CHECK_URL =
-  'https://s3.amazonaws.com/cdns3.nerdwallet.com/piggy/version.json';
+  'https://s3.amazonaws.com/cdns3.nerdwallet.com/piggy/version-oss.json';
 
-const RELEASES_URL = 'https://github.com/NerdWallet/piggy/releases';
+const RELEASES_URL = 'https://github.com/NerdWalletOSS/piggy/releases';
 
 const globalSettings = settings.get('global');
 
