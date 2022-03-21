@@ -5,7 +5,7 @@
   "homepage": "https://github.com/NerdWalletOSS/piggy",
   "author": "Casey Langen <clangen@nerdwallet.com>",
   "main": "dist/index.js",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "scripts": {
     "tsc": "tsc --allowJs --noEmit -p tsconfig.lint.json",
     "eslint": "TIMING=1 eslint ./lib/src --ext .js,.jsx,.ts,.tsx",
