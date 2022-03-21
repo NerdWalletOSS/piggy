@@ -1,3 +1,7 @@
+## 1.8.3 (clangen)
+
+* Added `Piggy.http.setRequestInterceptor` to allow clients to intercept and rewrite HTTP requests.
+
 ## 1.8.2 (clangen)
 
 * Fix compability issues with React Native 0.68+
