@@ -7,7 +7,8 @@ const {
 module.exports = async (context) => {
   const { electronPlatformName, appOutDir } = context;
   if (electronPlatformName !== 'darwin') {
-    throw new Error('You can build MacOS .app only on MacOS.');
+    console.error('You can build MacOS .app only on MacOS.');
+    return;
   }
   const appName = context.packager.appInfo.productFilename;
   const appPath = path.join(context.appOutDir, `${appName}.app`);
