@@ -6,5 +6,5 @@ export default {
   key: 'redux',
   title: 'redux state subscriptions',
   fontAwesomeIcon: faDatabase,
-  order: 2,
+  order: 3,
 };
