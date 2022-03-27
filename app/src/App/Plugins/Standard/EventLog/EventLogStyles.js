@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     order: 2,
     flex: '1 1 auto',
     alignSelf: 'auto',
+    overflowX: 'hidden',
   },
   timestamp: {
     paddingLeft: 8,
