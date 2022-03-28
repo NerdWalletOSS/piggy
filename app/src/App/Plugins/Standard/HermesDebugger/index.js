@@ -6,5 +6,5 @@ export default {
   key: 'hermesdebugger',
   title: 'hermes debugger',
   fontAwesomeIcon: faBug,
-  order: 99,
+  order: 2,
 };

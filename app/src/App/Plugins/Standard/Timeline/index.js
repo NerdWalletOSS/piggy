@@ -6,5 +6,5 @@ export default {
   key: 'timeline',
   title: 'timeline',
   fontAwesomeIcon: faStopwatch,
-  order: 2,
+  order: 1,
 };

@@ -2,6 +2,10 @@ import React, { PureComponent } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import PropTypes from 'prop-types';
 
+const SCROLLER_STYLE = {
+  'overflow-x': 'hidden',
+};
+
 class VirtuosoVirtualList extends PureComponent {
   constructor(props) {
     super(props);
@@ -97,12 +101,15 @@ class VirtuosoVirtualList extends PureComponent {
       totalCount,
       overscanCount,
       disablePinToBottom,
+      style,
       ...restProps
     } = this.props;
     const { pinToBottom } = this.state;
+    const styleProps = { ...(style || {}), ...SCROLLER_STYLE };
     return (
       <Virtuoso
         ref={this.listRef}
+        style={styleProps}
         totalCount={totalCount}
         overscan={overscanCount * 100}
         followOutput={!disablePinToBottom && pinToBottom}
@@ -120,12 +127,14 @@ VirtuosoVirtualList.propTypes = {
   onPinChanged: PropTypes.func,
   disablePinToBottom: PropTypes.bool,
   overscanCount: PropTypes.number,
+  style: PropTypes.object,
 };
 
 VirtuosoVirtualList.defaultProps = {
   onPinChanged: undefined,
   disablePinToBottom: false,
   overscanCount: 64,
+  style: {},
 };
 
 export default VirtuosoVirtualList;
