@@ -40,7 +40,7 @@ module.exports = async (context) => {
       appleApiIssuer,
     });
     console.log(`Done notarizing ${appId}`);
-  } catch (error) {
-    console.error(error);
+  } catch {
+    console.error('Failed! Please ensure valid credentials are specified via environment variables.');
   }
 };
