@@ -1,3 +1,7 @@
+## 1.8.4 (clangen)
+
+* More RN 0.68+ compatibility fixes for iOS related to bundle loading.
+
 ## 1.8.3 (clangen)
 
 * Added `Piggy.http.setRequestInterceptor` to allow clients to intercept and rewrite HTTP requests.

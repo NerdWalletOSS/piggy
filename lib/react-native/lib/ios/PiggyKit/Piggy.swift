@@ -457,9 +457,11 @@ public class Piggy: NSObject {
                 enableMinification: RCTBundleURLProvider.sharedSettings()?.enableMinification ?? true
             )
         } else {
-            return RCTBundleURLProvider
-                .sharedSettings()
-                .jsBundleURL(forBundleRoot: "index", fallbackURLProvider: { nil })
+            #if DEBUG
+                return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index", fallbackURLProvider: { nil })
+            #else
+                return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+            #endif
         }
     }
 
