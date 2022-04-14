@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "app"
+    },
+    {
+      "path": "lib/react-native"
+    }
+  ],
+  "settings": {
+    "editor.tabSize": 2,
+    "editor.renderWhitespace": "all",
+    "editor.formatOnSave": true,
+    "window.title": "${activeEditorShort}${separator}${folderPath}${separator}${rootName}"
+  }
+}
