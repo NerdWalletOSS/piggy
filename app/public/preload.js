@@ -21,9 +21,6 @@ const forwarder = {
   output: '',
 };
 
-/* port -> connection */
-const reactDevToolsServers = {};
-
 let adbPath = '';
 let xcrunPath = '';
 
@@ -383,42 +380,6 @@ global.ipc = {
     },
   },
 
-  reactDevTools: {
-    stop: async (port) => {
-      const ports =
-        port === undefined || port === null
-          ? Object.keys[reactDevToolsServers]
-          : [port];
-      for (let i = 0; i < ports.length; i++) {
-        const instance = reactDevToolsServers[ports[i]];
-        if (instance) {
-          /* eslint-disable-next-line no-await-in-loop */
-          await instance.close();
-          delete reactDevToolsServers[port];
-        }
-      }
-    },
-    start: async (port, elementId) => {
-      await global.ipc.reactDevTools.stop(port);
-      const element = document.getElementById(elementId);
-      const module = require('react-devtools-core/standalone');
-      const standalone = module.default;
-      standalone.setStatusListener((status) => {
-        if (status === 'Failed to start the server.') {
-          console.error(
-            '[ReactDevTools]',
-            `Failed to start React DevTools server with port \`${port}\`, is another server listening?`
-          );
-          delete reactDevToolsServers[port];
-        }
-      });
-      standalone.setContentDOMNode(element);
-      const server = standalone.startServer(port);
-      reactDevToolsServers[port] = { server, elementId };
-    },
-    isRunning: (port) => !!reactDevToolsServers[port],
-  },
-
   mainWindow: {
     maximize: () => {
       const currentWindow = remote.getCurrentWindow();
@@ -442,3 +403,30 @@ global.ipc = {
     },
   },
 };
+
+/*
+ * apply any plugin-specified preload scripts. note these scripts are loaded
+ * in the main process, which uses an old version of node that does not support
+ * JS modules, so they must use `require` and not `import`.
+ */
+
+const PRELOADS_PATH = path.join(__dirname, '../src/App/Plugins/preloads.js');
+/* eslint-disable-next-line import/no-dynamic-require */
+const PRELOADS = require(PRELOADS_PATH).default();
+PRELOADS.forEach((preloadPath) => {
+  if (fs.existsSync(preloadPath)) {
+    console.log('[plugin-preloads]', 'trying to load', preloadPath);
+    try {
+      /* eslint-disable-next-line import/no-dynamic-require */
+      const preload = require(preloadPath);
+      if (preload && preload.default && preload.default.start) {
+        console.log('[plugin-preloads]', 'starting', preloadPath);
+        preload.default.start(global.ipc);
+      }
+    } catch (e) {
+      console.warn('[plugin-preloads]', preloadPath, 'failed', e);
+    }
+  } else {
+    console.warn('[plugin-preloads]', `'${preloadPath}' file not found`);
+  }
+});
