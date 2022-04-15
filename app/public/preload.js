@@ -409,12 +409,14 @@ global.ipc = {
             '[ReactDevTools]',
             `Failed to start React DevTools server with port \`${port}\`, is another server listening?`
           );
+          delete reactDevToolsServers[port];
         }
       });
       standalone.setContentDOMNode(element);
       const server = standalone.startServer(port);
       reactDevToolsServers[port] = { server, elementId };
     },
+    isRunning: (port) => !!reactDevToolsServers[port],
   },
 
   mainWindow: {

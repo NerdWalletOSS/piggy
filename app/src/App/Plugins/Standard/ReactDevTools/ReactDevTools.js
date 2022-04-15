@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PluginLayout from '@widgets/Plugin/PluginLayout';
 import { StyleSheet, css } from 'aphrodite/no-important';
-
-/* sample implementation: https://github.com/jhen0409/react-native-debugger/blob/master/app/containers/ReactInspector.js */
 
 const REACT_DEVTOOLS_CONTAINER_ID = 'piggy-react-devtools-container';
 const REACT_DEVTOOLS_SERVER_PORT = 8097;
@@ -14,22 +12,14 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   innerWebViewContainer: {
+    display: 'flex',
     position: 'absolute',
     right: 0,
     bottom: 0,
     left: 0,
     top: 0,
   },
-  errorWrapper: {
-    width: '100%',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    bottom: 0,
-    overflowY: 'auto',
-  },
-  errorContainer: {
+  waitingContainer: {
     display: 'flex',
     flex: 1,
     alignItems: 'center',
@@ -40,22 +30,22 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
+  waitingText: {
+    alignSelf: 'center',
+    justifySelf: 'center',
+  },
 });
 
 const ReactDevTools = () => {
+  const [domRef, setDomRef] = useState(null);
+  const port = REACT_DEVTOOLS_SERVER_PORT; /* TODO: make configurable */
+
   useEffect(() => {
-    /* TODO: don't sleep, just wait for the DOM to be loaded. should be able to
-    do this by observing the ref? */
-    setTimeout(() => {
-      const port = REACT_DEVTOOLS_SERVER_PORT; /* TODO: make configurable */
+    if (domRef) {
       const elementId = REACT_DEVTOOLS_CONTAINER_ID;
-      /* the UI shouldn't be responsible for this, it should be started by
-      the BackendContext, perhaps. even better: figure out a way for plugins
-      to specify their own preload scripts */
       global.ipc.reactDevTools.start(port, elementId);
-    }, 2500);
-    /* TODO: close server on unmount? */
-  }, []);
+    }
+  }, [domRef, port]);
 
   return (
     <PluginLayout title="react dev tools">
@@ -63,8 +53,13 @@ const ReactDevTools = () => {
         <div
           className={css(styles.innerWebViewContainer)}
           id={REACT_DEVTOOLS_CONTAINER_ID}
+          ref={setDomRef}
         >
-          loading...
+          <div className={css(styles.waitingContainer)}>
+            <div className={css(styles.waitingText)}>
+              waiting for client connection on port {port}...
+            </div>
+          </div>
         </div>
       </div>
     </PluginLayout>
