@@ -17,7 +17,7 @@ const preloadScript = (pluginName) =>
   path.join(__dirname, 'Standard', pluginName, 'preload.js');
 
 const resolvePreloads = () => [
-  preloadScript('ReactDevTools'),
+  preloadScript('ReactTools'),
   ...resolveExternalPreloads(),
 ];
 

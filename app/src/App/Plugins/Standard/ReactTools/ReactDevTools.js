@@ -48,7 +48,7 @@ const ReactDevTools = () => {
   }, [domRef, port]);
 
   return (
-    <PluginLayout title="react dev tools">
+    <PluginLayout>
       <div className={css(styles.outerWebViewContainer)}>
         <div
           className={css(styles.innerWebViewContainer)}
