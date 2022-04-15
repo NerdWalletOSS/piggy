@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     flex: 1,
+    marginTop: 8,
     padding: 8,
     textAlign: 'center',
     border: `2px solid transparent`,
     outline: 'none',
     backgroundColor: colors.background,
     color: colors.foreground,
-    boxShadow: `0 0 4px ${colors.shadow}`,
     boxSizing: 'border-box',
     cursor: 'pointer',
     transition: TRANSITION_IN,
@@ -51,6 +51,8 @@ const styles = StyleSheet.create({
   tabButtonSelected: {
     backgroundColor: offsetColor(colors.tabBackground, -0.2),
     border: `2px solid ${colors.yellow}`,
+    color: colors.yellow,
+    textDecoration: 'underline',
     borderBottom: 'none',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
