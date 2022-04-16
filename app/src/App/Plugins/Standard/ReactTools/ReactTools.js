@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     padding: 8,
     textAlign: 'center',
     borderTop: `2px solid transparent`,
-    borderBottom: `2px solid transparent`,
+    borderBottom: `1px solid ${TAB_BORDER_COLOR}`,
     outline: 'none',
     backgroundColor: colors.background,
     color: colors.foreground,
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     ':hover': {
       backgroundColor: offsetColor(colors.background, 0.15),
     },
-    borderBottom: `1px solid ${TAB_BORDER_COLOR}`,
   },
   tabButtonSelected: {
     backgroundColor: offsetColor(colors.tabBackground, -0.2),
