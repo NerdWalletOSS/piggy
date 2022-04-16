@@ -21,6 +21,7 @@
     "flat": "^5.0.2",
     "js-worker-search": "^1.4.1",
     "lodash": "^4.17.21",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "react-contenteditable": "^3.3.6",
     "react-devtools-core": "^4.24.4",
     "url": "^0.11.0"
@@ -65,7 +66,7 @@
     "react-measure": "^2.5.2",
     "react-resize-observer": "^1.1.1",
     "react-responsive-modal": "^3.6.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.0",
     "react-splitter-layout": "^4.0.0",
     "react-toastify": "^5.5.0",
     "react-virtualized-auto-sizer": "^1.0.5",
