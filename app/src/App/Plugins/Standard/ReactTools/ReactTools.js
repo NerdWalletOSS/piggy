@@ -7,6 +7,7 @@ import HermesDebugger from './HermesDebugger';
 import ReactDevTools from './ReactDevTools';
 
 const TRANSITION_IN = 'color .1s ease-in, background-color .1s ease-in';
+const TAB_BORDER_COLOR = colors.green;
 
 const TOOL_ID = {
   REACT_DEVTOOLS: 0,
@@ -33,25 +34,29 @@ const styles = StyleSheet.create({
     marginTop: 8,
     padding: 8,
     textAlign: 'center',
-    border: `2px solid transparent`,
+    borderTop: `2px solid transparent`,
+    borderBottom: `2px solid transparent`,
     outline: 'none',
     backgroundColor: colors.background,
     color: colors.foreground,
     boxSizing: 'border-box',
     cursor: 'pointer',
     transition: TRANSITION_IN,
+    ':first-child': {
+      borderLeft: 'none',
+    },
+    ':last-child': {
+      borderRight: 'none',
+    },
     ':hover': {
       backgroundColor: offsetColor(colors.background, 0.15),
     },
-    ':focus': {
-      border: `1px dashed ${colors.yellow}`,
-    },
-    borderBottom: `1px dashed ${colors.yellow}`,
+    borderBottom: `1px solid ${TAB_BORDER_COLOR}`,
   },
   tabButtonSelected: {
     backgroundColor: offsetColor(colors.tabBackground, -0.2),
-    border: `2px solid ${colors.yellow}`,
-    color: colors.yellow,
+    border: `2px solid ${TAB_BORDER_COLOR}`,
+    color: TAB_BORDER_COLOR,
     textDecoration: 'underline',
     borderBottom: 'none',
     borderTopLeftRadius: 8,
