@@ -13,6 +13,7 @@ const { app, dialog } = remote;
 const { spawn } = require('child_process');
 
 const version = remote.app.getVersion();
+const { isPackaged, getAppPath } = remote.app;
 
 const adb = require('@devicefarmer/adbkit').Adb;
 
@@ -55,7 +56,6 @@ const IS_MACOS = getPlatform() === 'mac';
 const getPathToBinary = (name) => {
   const resolvedName = IS_WINDOWS ? `${name}.exe` : name;
   const root = process.cwd();
-  const { isPackaged, getAppPath } = remote.app;
   const binariesPath = isPackaged
     ? path.join(path.dirname(getAppPath()), '..', './Resources', './bin')
     : path.join(root, './resources', getPlatform(), './bin');
@@ -410,23 +410,31 @@ global.ipc = {
  * JS modules, so they must use `require` and not `import`.
  */
 
-const PRELOADS_PATH = path.join(__dirname, '../src/App/Plugins/preloads.js');
-/* eslint-disable-next-line import/no-dynamic-require */
-const PRELOADS = require(PRELOADS_PATH).default();
+let PRELOADS;
+if (isPackaged) {
+  /* release builds cannot load preload scripts outside of the current working
+  directory; we have a build process to aggregate these all together at build
+  time, and place them in ./preload-modules.js. */
+  PRELOADS = require('./preload-manifest').default || [];
+} else {
+  /* debug builds load directly from the filesystem for quicker iteration and
+  easier debugging... */
+  const PRELOADS_PATH = '../src/App/Plugins/preloads.js';
+  /* eslint-disable-next-line import/no-dynamic-require */
+  PRELOADS = require(PRELOADS_PATH).default() || [];
+}
+
+console.log('[plugin-preloads', 'resolved', PRELOADS);
 PRELOADS.forEach((preloadPath) => {
-  if (fs.existsSync(preloadPath)) {
-    console.log('[plugin-preloads]', 'trying to load', preloadPath);
-    try {
-      /* eslint-disable-next-line import/no-dynamic-require */
-      const preload = require(preloadPath);
-      if (preload && preload.default && preload.default.start) {
-        console.log('[plugin-preloads]', 'starting', preloadPath);
-        preload.default.start(global.ipc);
-      }
-    } catch (e) {
-      console.warn('[plugin-preloads]', preloadPath, 'failed', e);
+  console.log('[plugin-preloads]', 'trying to load', preloadPath);
+  try {
+    /* eslint-disable-next-line import/no-dynamic-require */
+    const preload = require(preloadPath);
+    if (preload && preload.default && preload.default.start) {
+      console.log('[plugin-preloads]', 'starting', preloadPath);
+      preload.default.start(global.ipc);
     }
-  } else {
-    console.warn('[plugin-preloads]', `'${preloadPath}' file not found`);
+  } catch (e) {
+    console.warn('[plugin-preloads]', preloadPath, 'failed', e);
   }
 });

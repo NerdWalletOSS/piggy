@@ -11,6 +11,10 @@ node_modules
 /build
 /dist
 
+# generated files
+public/preload-manifest.js
+public/preload-module-*
+
 # misc
 .DS_Store
 .env.local
