@@ -20,6 +20,7 @@ import Modal from '@widgets/Modal/Modal';
 import Button from '@widgets/Button/Button';
 import Tooltip from '@widgets/Tooltip/Tooltip';
 import { fileFilter } from '@lib/utils';
+import runMigrations from '@lib/migrations';
 import { contextMenu } from '@lib/dom';
 import resolvePlugins from '@plugins';
 import { BackendContext } from './BackendContext';
@@ -80,6 +81,17 @@ const MENU_ITEMS = [
   },
 ];
 
+const runUpdateMigrationsIfNecessary = () => {
+  const currentVersion = global.ipc.status.version;
+  const lastStartedVersion = globalSettings.get(
+    'mainWindow.lastStartedVersion'
+  );
+  if (currentVersion !== lastStartedVersion) {
+    runMigrations(currentVersion, lastStartedVersion);
+    globalSettings.set('mainWindow.lastStartedVersion', currentVersion);
+  }
+};
+
 const newVersionAvailable = () => {
   if (lastUpdateCheck.latestVersion) {
     if (
@@ -122,6 +134,7 @@ class MainWindow extends Component {
     this.iconRef = React.createRef();
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleGetSessionMessage = this.handleGetSessionMessage.bind(this);
+    runUpdateMigrationsIfNecessary();
   }
 
   componentDidMount = () => {
