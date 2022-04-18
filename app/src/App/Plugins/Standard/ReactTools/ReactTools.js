@@ -44,9 +44,11 @@ const styles = StyleSheet.create({
     transition: TRANSITION_IN,
     ':first-child': {
       borderLeft: 'none',
+      borderTopLeftRadius: 0,
     },
     ':last-child': {
       borderRight: 'none',
+      borderTopRightRadius: 0,
     },
     ':hover': {
       backgroundColor: offsetColor(colors.background, 0.15),

@@ -104,7 +104,7 @@ const HermesDebugger = () => {
   };
 
   return (
-    <PluginLayout title="react tools" toolbarComponents={[toolbarDropdown()]}>
+    <PluginLayout toolbarComponents={[toolbarDropdown()]}>
       <div className={css(HermesStyles.outerWebViewContainer)}>
         <div
           className={css(HermesStyles.innerWebViewContainer)}
