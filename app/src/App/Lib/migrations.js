@@ -3,6 +3,7 @@ import {
   setDevicesSetting,
   DEVICE_SETTINGS_KEYS,
 } from '@plugins/Standard/Devices/DevicesSettings';
+import { sortIntArray } from '@lib/utils';
 
 const pad = (str) => str.padStart(8, '0');
 
@@ -28,7 +29,7 @@ const runMigrations = (currentVersion, lastVersion) => {
       if (forwardedPorts.indexOf(8097) === -1) {
         setDevicesSetting(
           DEVICE_SETTINGS_KEYS.FORWARDED_PORTS,
-          [...forwardedPorts, 8097].sort()
+          sortIntArray([...forwardedPorts, 8097])
         );
       }
       console.log('test');
