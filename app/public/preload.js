@@ -230,10 +230,14 @@ global.ipc = {
               '[forwarder] failed to kill other forwarders (or no other instances running)'
             );
           }
+          const portMap = {};
+          for (let i = 0; i < ports.length; i++) {
+            portMap[ports[i]] = ports[i] + 1000;
+          }
           const pathToBinary = getPathToBinary('forwarder');
           if (fs.existsSync(pathToBinary)) {
-            const args = `--ports=${Object.keys(ports)
-              .map((k) => `${k}:${ports[k]}`)
+            const args = `--ports=${Object.keys(portMap)
+              .map((k) => `${k}:${portMap[k]}`)
               .join(',')}`;
             const proc = spawn(pathToBinary, [args]);
             if (proc) {
@@ -272,10 +276,6 @@ global.ipc = {
           forwarder.proc.kill('SIGTERM');
         }
       }
-    },
-    restart: () => {
-      this.stop();
-      this.start();
     },
     getOutput: () => ({ stdout: forwarder.output, stderr: forwarder.error }),
   },

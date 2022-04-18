@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { css } from 'aphrodite/no-important';
 import { faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'prop-types';
 import styles from './DevicesStyles';
 
 const MESSAGE = {
@@ -9,14 +10,7 @@ const MESSAGE = {
   FORWARDER_STOPPED: '/forwarder/stopped',
 };
 
-export const DEFAULT_FORWARD_PORTS = {
-  8081: 9081 /* bundler */,
-  8082: 9082 /* bundler */,
-  8347: 9347 /* piggy */,
-  17321: 18321 /* query0 */,
-};
-
-export default class AndroidTools extends PureComponent {
+export default class Forwarder extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +51,8 @@ export default class AndroidTools extends PureComponent {
   };
 
   handleStart = () => {
-    global.ipc.forwarder.start(DEFAULT_FORWARD_PORTS);
+    const { forwardedPorts } = this.props;
+    global.ipc.forwarder.start(forwardedPorts);
   };
 
   render() {
@@ -78,9 +73,10 @@ export default class AndroidTools extends PureComponent {
     if (!running) {
       children = <div>not running.</div>;
     } else {
-      const ports = Object.keys(DEFAULT_FORWARD_PORTS).map((k) => (
+      const { forwardedPorts } = this.props;
+      const ports = Object.keys(forwardedPorts).map((k) => (
         <div className={css(styles.devicesRowChip)}>
-          {k}:{DEFAULT_FORWARD_PORTS[k]}
+          {forwardedPorts[k]}:{forwardedPorts[k] + 1000}
         </div>
       ));
       children = [<div>forwarding ports</div>, ...ports];
@@ -119,3 +115,7 @@ export default class AndroidTools extends PureComponent {
     );
   }
 }
+
+Forwarder.propTypes = {
+  forwardedPorts: PropTypes.arrayOf(PropTypes.number).isRequired,
+};

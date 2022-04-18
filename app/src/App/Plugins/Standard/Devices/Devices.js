@@ -89,7 +89,9 @@ export default class Devices extends PureComponent {
             {showForwardedPortsModal && this.renderForwardedPortsModal()}
             <ClientList />
             <AndroidTools forwardedPorts={forwardedPorts} />
-            {global.ipc.forwarder.isAvailable() && <Forwarder />}
+            {global.ipc.forwarder.isAvailable() && (
+              <Forwarder forwardedPorts={forwardedPorts} />
+            )}
             <Blocklist />
           </div>
         </div>

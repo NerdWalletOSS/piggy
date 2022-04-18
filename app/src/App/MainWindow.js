@@ -13,7 +13,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { DEFAULT_FORWARD_PORTS } from '@plugins/Standard/Devices/Forwarder';
 import { getIconForClient } from '@plugins/Standard/Devices/ClientList';
 import ContextMenu from '@widgets/ContextMenu/ContextMenu';
 import Modal from '@widgets/Modal/Modal';
@@ -138,13 +137,6 @@ class MainWindow extends Component {
   }
 
   componentDidMount = () => {
-    if (
-      global.ipc.forwarder.isAvailable() &&
-      !global.ipc.forwarder.isRunning()
-    ) {
-      global.ipc.forwarder.start(DEFAULT_FORWARD_PORTS);
-    }
-
     global.ipc.events.emit(
       '/client/setDeviceIdBlocklist',
       globalSettings.get('devices.blocklist', [])
