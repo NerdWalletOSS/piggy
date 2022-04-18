@@ -8,7 +8,8 @@ const resolveExternalPreloads = () => {
       return resolver() || [];
     }
   } catch (e) {
-    console.error('failed to load external preloads', e);
+    console.warn('failed to load external preloads', e);
+    console.warn('the warning above can probably be safely ignored...');
   }
   return [];
 };
