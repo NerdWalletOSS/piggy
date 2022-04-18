@@ -230,10 +230,14 @@ global.ipc = {
               '[forwarder] failed to kill other forwarders (or no other instances running)'
             );
           }
+          const portMap = {};
+          for (let i = 0; i < ports.length; i++) {
+            portMap[ports[i]] = ports[i] + 1000;
+          }
           const pathToBinary = getPathToBinary('forwarder');
           if (fs.existsSync(pathToBinary)) {
-            const args = `--ports=${Object.keys(ports)
-              .map((k) => `${k}:${ports[k]}`)
+            const args = `--ports=${Object.keys(portMap)
+              .map((k) => `${k}:${portMap[k]}`)
               .join(',')}`;
             const proc = spawn(pathToBinary, [args]);
             if (proc) {
@@ -272,10 +276,6 @@ global.ipc = {
           forwarder.proc.kill('SIGTERM');
         }
       }
-    },
-    restart: () => {
-      this.stop();
-      this.start();
     },
     getOutput: () => ({ stdout: forwarder.output, stderr: forwarder.error }),
   },
@@ -403,3 +403,30 @@ global.ipc = {
     },
   },
 };
+
+/*
+ * apply any plugin-specified preload scripts. note these scripts are loaded
+ * in the main process, which uses an old version of node that does not support
+ * JS modules, so they must use `require` and not `import`.
+ */
+
+const PRELOADS_PATH = path.join(__dirname, '../src/App/Plugins/preloads.js');
+/* eslint-disable-next-line import/no-dynamic-require */
+const PRELOADS = require(PRELOADS_PATH).default();
+PRELOADS.forEach((preloadPath) => {
+  if (fs.existsSync(preloadPath)) {
+    console.log('[plugin-preloads]', 'trying to load', preloadPath);
+    try {
+      /* eslint-disable-next-line import/no-dynamic-require */
+      const preload = require(preloadPath);
+      if (preload && preload.default && preload.default.start) {
+        console.log('[plugin-preloads]', 'starting', preloadPath);
+        preload.default.start(global.ipc);
+      }
+    } catch (e) {
+      console.warn('[plugin-preloads]', preloadPath, 'failed', e);
+    }
+  } else {
+    console.warn('[plugin-preloads]', `'${preloadPath}' file not found`);
+  }
+});

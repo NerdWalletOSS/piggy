@@ -5,6 +5,7 @@ import { css } from 'aphrodite/no-important';
 import PluginLayout from '@widgets/Plugin/PluginLayout';
 import { Toolbar, ToolbarIcon } from '@widgets/Toolbar';
 import CrudList from '@widgets/CrudList/CrudList';
+import { sortIntArray } from '@lib/utils';
 import { faUsb } from '@fortawesome/free-brands-svg-icons';
 import styles from './DevicesStyles';
 import ClientList from './ClientList';
@@ -37,11 +38,13 @@ export default class Devices extends PureComponent {
   renderForwardedPortsModal = () => {
     const { forwardedPorts } = this.state;
     const handleCrudSave = (list) => {
-      const parsed = _.compact(
-        _.map(list, (e) => {
-          const port = parseInt(e, 10);
-          return _.isNumber(port) ? port : undefined;
-        })
+      const parsed = sortIntArray(
+        _.compact(
+          _.map(list, (e) => {
+            const port = parseInt(e, 10);
+            return _.isNumber(port) ? port : undefined;
+          })
+        )
       );
       setDevicesSetting(DEVICE_SETTINGS_KEYS.FORWARDED_PORTS, parsed);
       this.setState({ showForwardedPortsModal: false, forwardedPorts: parsed });
@@ -53,7 +56,7 @@ export default class Devices extends PureComponent {
         onClose={this.handleForwardedPortsModalClose}
         open={this.state.showForwardedPortsModal}
         contentStyleOverrides={{ padding: 0 }}
-        data={forwardedPorts}
+        data={sortIntArray(forwardedPorts)}
         saveData={handleCrudSave}
       />
     );
@@ -86,7 +89,9 @@ export default class Devices extends PureComponent {
             {showForwardedPortsModal && this.renderForwardedPortsModal()}
             <ClientList />
             <AndroidTools forwardedPorts={forwardedPorts} />
-            {global.ipc.forwarder.isAvailable() && <Forwarder />}
+            {global.ipc.forwarder.isAvailable() && (
+              <Forwarder forwardedPorts={forwardedPorts} />
+            )}
             <Blocklist />
           </div>
         </div>

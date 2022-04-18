@@ -13,13 +13,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { DEFAULT_FORWARD_PORTS } from '@plugins/Standard/Devices/Forwarder';
 import { getIconForClient } from '@plugins/Standard/Devices/ClientList';
 import ContextMenu from '@widgets/ContextMenu/ContextMenu';
 import Modal from '@widgets/Modal/Modal';
 import Button from '@widgets/Button/Button';
 import Tooltip from '@widgets/Tooltip/Tooltip';
 import { fileFilter } from '@lib/utils';
+import runMigrations from '@lib/migrations';
 import { contextMenu } from '@lib/dom';
 import resolvePlugins from '@plugins';
 import { BackendContext } from './BackendContext';
@@ -80,6 +80,17 @@ const MENU_ITEMS = [
   },
 ];
 
+const runUpdateMigrationsIfNecessary = () => {
+  const currentVersion = global.ipc.status.version;
+  const lastStartedVersion = globalSettings.get(
+    'mainWindow.lastStartedVersion'
+  );
+  if (currentVersion !== lastStartedVersion) {
+    runMigrations(currentVersion, lastStartedVersion);
+    globalSettings.set('mainWindow.lastStartedVersion', currentVersion);
+  }
+};
+
 const newVersionAvailable = () => {
   if (lastUpdateCheck.latestVersion) {
     if (
@@ -122,16 +133,10 @@ class MainWindow extends Component {
     this.iconRef = React.createRef();
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleGetSessionMessage = this.handleGetSessionMessage.bind(this);
+    runUpdateMigrationsIfNecessary();
   }
 
   componentDidMount = () => {
-    if (
-      global.ipc.forwarder.isAvailable() &&
-      !global.ipc.forwarder.isRunning()
-    ) {
-      global.ipc.forwarder.start(DEFAULT_FORWARD_PORTS);
-    }
-
     global.ipc.events.emit(
       '/client/setDeviceIdBlocklist',
       globalSettings.get('devices.blocklist', [])

@@ -104,10 +104,7 @@ const HermesDebugger = () => {
   };
 
   return (
-    <PluginLayout
-      title="hermes debugger"
-      toolbarComponents={[toolbarDropdown()]}
-    >
+    <PluginLayout toolbarComponents={[toolbarDropdown()]}>
       <div className={css(HermesStyles.outerWebViewContainer)}>
         <div
           className={css(HermesStyles.innerWebViewContainer)}

@@ -31,15 +31,21 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
   checkboxTrue: {
+    display: 'flex',
+    flex: 1,
     border: `1px solid ${colors.green}`,
-    width: '100%',
-    backgroundColor: colors.green,
     ':hover': {
-      border: `1px solid ${offsetColor(colors.green, -0.3)}`,
+      border: colors.green,
     },
   },
+  innerTrue: {
+    backgroundColor: offsetColor(colors.green, -0.3),
+    margin: 2,
+    flex: 1,
+  },
   checkboxFalse: {
-    width: '100%',
+    display: 'flex',
+    flex: 1,
     border: `1px solid ${colors.red}`,
     ':hover': {
       border: `1px solid ${offsetColor(colors.red, 0.3)}`,
@@ -82,7 +88,9 @@ const Checkbox = ({ label, value, onChange, style }) => {
       <div className={css(styles.checkbox)}>
         <div
           className={css(value ? styles.checkboxTrue : styles.checkboxFalse)}
-        />
+        >
+          <div className={css(value ? styles.innerTrue : undefined)} />
+        </div>
       </div>
       <div className={css(styles.label)}>{label}</div>
     </div>

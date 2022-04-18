@@ -5,7 +5,10 @@ const aliases = _.get(config({ resolve: [] }), 'resolve.alias', {});
 const mapped = _.map(aliases, (v, k) => [k, v]); /* ['@foo', '/path/to/bar'] */
 
 module.exports = {
-  plugins: ['prettier', 'react', 'react-hooks'],
+  /* we use 'only-warn' so we can develop the app with live updates without
+  warnings preventing updates. the 'yarn lint' script will effectively disable this
+  plugin by setting --max-warnings=0 */
+  plugins: ['prettier', 'react', 'react-hooks', 'only-warn'],
   extends: ['airbnb', 'prettier'],
   parser: '@babel/eslint-parser',
   parserOptions: {

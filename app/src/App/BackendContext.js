@@ -45,6 +45,8 @@ export class BackendContextProvider extends PureComponent {
       }, 1000);
     }
 
+    this.restartIosForwarder();
+
     global.ipc.android.startAdb();
   }
 
@@ -74,6 +76,21 @@ export class BackendContextProvider extends PureComponent {
       clients: _.reject(clients, { id: client.id }),
     });
   }
+
+  restartIosForwarder = () => {
+    if (!global.ipc.forwarder.isAvailable()) {
+      return;
+    }
+    if (!global.ipc.forwarder.isRunning()) {
+      const forwardedPorts = getDevicesSetting(
+        DEVICE_SETTINGS_KEYS.FORWARDED_PORTS
+      );
+      if (!forwardedPorts.length) {
+        return;
+      }
+      global.ipc.forwarder.start(forwardedPorts);
+    }
+  };
 
   autoConnectAndroidDevicesIfEnabled = () => {
     if (getDevicesSetting(DEVICE_SETTINGS_KEYS.AUTO_CONNECT_ANDROID_DEVICES)) {
