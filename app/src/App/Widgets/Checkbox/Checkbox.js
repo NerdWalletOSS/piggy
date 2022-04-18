@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     flex: 1,
     border: `1px solid ${colors.green}`,
     ':hover': {
-      border: `1px solid ${offsetColor(colors.green, -0.3)}`,
+      border: colors.green,
     },
   },
   innerTrue: {
-    backgroundColor: offsetColor(colors.green, 0.0),
+    backgroundColor: offsetColor(colors.green, -0.3),
     margin: 2,
     flex: 1,
   },
