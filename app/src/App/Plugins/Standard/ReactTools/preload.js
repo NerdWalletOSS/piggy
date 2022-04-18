@@ -1,17 +1,15 @@
 /* port -> connection */
-const reactDevToolsServers = {};
+const instances = {};
 
 const stop = async (port) => {
   const ports =
-    port === undefined || port === null
-      ? Object.keys[reactDevToolsServers]
-      : [port];
+    port === undefined || port === null ? Object.keys[instances] : [port];
   for (let i = 0; i < ports.length; i++) {
-    const instance = reactDevToolsServers[ports[i]];
+    const instance = instances[ports[i]];
     if (instance) {
       /* eslint-disable-next-line no-await-in-loop */
       await instance.close();
-      delete reactDevToolsServers[port];
+      delete instances[port];
     }
   }
 };
@@ -27,15 +25,15 @@ const start = async (port, elementId) => {
         '[ReactDevTools]',
         `Failed to start React DevTools server with port \`${port}\`, is another server listening?`
       );
-      delete reactDevToolsServers[port];
+      delete instances[port];
     }
   });
   standalone.setContentDOMNode(element);
   const server = standalone.startServer(port);
-  reactDevToolsServers[port] = { server, elementId };
+  instances[port] = { server, elementId };
 };
 
-const isRunning = (port) => !!reactDevToolsServers[port];
+const isRunning = (port) => !!instances[port];
 
 exports.default = {
   start: (ipc) => {
