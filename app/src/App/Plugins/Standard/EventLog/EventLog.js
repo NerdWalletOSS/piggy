@@ -262,7 +262,7 @@ class EventLog extends PureComponent {
         contentStyleOverrides={{ padding: 0 }}
         data={userDefinedDataPaths}
         saveData={handleCrudSave}
-        emptyText="no data paths added"
+        emptyText="no data sections configured"
       />
     );
   };
