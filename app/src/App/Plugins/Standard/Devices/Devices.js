@@ -13,6 +13,7 @@ import AndroidTools from './AndroidTools';
 import Forwarder from './Forwarder';
 import Blocklist from './Blocklist';
 import {
+  DEVICE_SETTINGS_DEFAULTS,
   DEVICE_SETTINGS_KEYS,
   getDevicesSetting,
   setDevicesSetting,
@@ -36,6 +37,8 @@ export default class Devices extends PureComponent {
   };
 
   renderForwardedPortsModal = () => {
+    const defaultForwardedPorts =
+      DEVICE_SETTINGS_DEFAULTS[DEVICE_SETTINGS_KEYS.FORWARDED_PORTS];
     const { forwardedPorts } = this.state;
     const handleCrudSave = (list) => {
       const parsed = sortIntArray(
@@ -57,6 +60,7 @@ export default class Devices extends PureComponent {
         open={this.state.showForwardedPortsModal}
         contentStyleOverrides={{ padding: 0 }}
         data={sortIntArray(forwardedPorts)}
+        defaults={sortIntArray(defaultForwardedPorts)}
         saveData={handleCrudSave}
       />
     );

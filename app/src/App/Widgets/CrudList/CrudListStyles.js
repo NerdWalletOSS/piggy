@@ -22,12 +22,20 @@ const styles = StyleSheet.create({
   crudContentWrapper: {
     display: 'flex',
   },
-  crudListFooter: {
+  crudListRightButtons: {
     backgroundColor: colors.titleBackground,
     display: 'flex',
     flexDirection: 'column',
     padding: 8,
     justifyContent: 'flex-start',
+  },
+  crudListBottomButtons: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    margin: 4,
+    marginTop: 8,
   },
   crudListContent: {
     display: 'flex',
@@ -62,9 +70,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonStyleOverrides: {
+  rightButtonStyleOverrides: {
     margin: 0,
     marginBottom: 4,
+    textAlign: 'center',
+  },
+  bottomButtonStyleOverrides: {
+    margin: 0,
+    marginLeft: 4,
     textAlign: 'center',
   },
 });

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, {
   useCallback,
   useEffect,
@@ -126,7 +127,15 @@ CrudRow.defaultProps = {
   placeholder: '',
 };
 
-const CrudList = ({ title, data, saveData, placeholder, emptyText }) => {
+const CrudList = ({
+  title,
+  data,
+  defaults,
+  saveData,
+  placeholder,
+  emptyText,
+  onClose,
+}) => {
   const [selectedIndex, setSelectedIndex] = useState(data?.length ? 0 : -1);
   const [editedItems, setEditedItems] = useState([...data]);
 
@@ -181,6 +190,14 @@ const CrudList = ({ title, data, saveData, placeholder, emptyText }) => {
     }
   }, [saveData, editedItems, setEditedItems, selectedIndex, setSelectedIndex]);
 
+  const handleCancel = useCallback(() => {
+    onClose?.();
+  }, [onClose]);
+
+  const handleDefaults = useCallback(() => {
+    setEditedItems([...defaults]);
+  }, [defaults, setEditedItems]);
+
   const handleAdd = useCallback(() => {
     setEditedItems([...editedItems, '']);
     setSelectedIndex(editedItems.length);
@@ -202,9 +219,9 @@ const CrudList = ({ title, data, saveData, placeholder, emptyText }) => {
         <div className={css(styles.crudListContent)}>
           {rows.length ? rows : empty}
         </div>
-        <div className={css(styles.crudListFooter)}>
+        <div className={css(styles.crudListRightButtons)}>
           <Button
-            style={styles.buttonStyleOverrides}
+            style={styles.rightButtonStyleOverrides}
             theme={BUTTON_THEME.PLUGIN_CONTENT}
             onClick={handleAdd}
           >
@@ -212,20 +229,39 @@ const CrudList = ({ title, data, saveData, placeholder, emptyText }) => {
           </Button>
           <Button
             enabled={selectedIndex >= 0}
-            style={styles.buttonStyleOverrides}
+            style={styles.rightButtonStyleOverrides}
             theme={BUTTON_THEME.PLUGIN_CONTENT}
             onClick={handleDelete}
           >
             delete
           </Button>
-          <Button
-            style={styles.buttonStyleOverrides}
-            theme={BUTTON_THEME.PLUGIN_CONTENT}
-            onClick={handleSave}
-          >
-            save
-          </Button>
         </div>
+      </div>
+      <div className={css(styles.crudListBottomButtons)}>
+        {!!defaults && (
+          <Button
+            style={styles.bottomButtonStyleOverrides}
+            theme={BUTTON_THEME.PLUGIN_CONTENT}
+            onClick={handleDefaults}
+          >
+            defaults
+          </Button>
+        )}
+        <div style={{ flex: 1 }} />
+        <Button
+          style={styles.bottomButtonStyleOverrides}
+          theme={BUTTON_THEME.PLUGIN_CONTENT}
+          onClick={handleCancel}
+        >
+          cancel
+        </Button>
+        <Button
+          style={styles.bottomButtonStyleOverrides}
+          theme={BUTTON_THEME.PLUGIN_CONTENT}
+          onClick={handleSave}
+        >
+          save
+        </Button>
       </div>
     </div>
   );
@@ -234,16 +270,20 @@ const CrudList = ({ title, data, saveData, placeholder, emptyText }) => {
 CrudList.propTypes = {
   title: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.any),
+  defaults: PropTypes.arrayOf(PropTypes.any),
   saveData: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
   emptyText: PropTypes.string,
+  onClose: PropTypes.func,
 };
 
 CrudList.defaultProps = {
   data: [],
+  defaults: undefined,
   title: null,
   placeholder: DEFAULT_PLACEHOLDER,
   emptyText: '',
+  onClose: _.noop,
 };
 
 CrudList.Modal = ({
@@ -261,7 +301,7 @@ CrudList.Modal = ({
     contentStyleOverrides={contentStyleOverrides}
     open={open}
   >
-    <CrudList {...props} />
+    <CrudList onClose={onClose} {...props} />
   </Modal>
 );
 
