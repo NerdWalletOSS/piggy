@@ -1,3 +1,7 @@
+## 1.8.5 (clangen)
+
+* Include `body` in HTTP interception callback.
+
 ## 1.8.4 (clangen)
 
 * More RN 0.68+ compatibility fixes for iOS related to bundle loading.
