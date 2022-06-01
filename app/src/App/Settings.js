@@ -41,6 +41,9 @@ class Settings {
     if (!_.isUndefined(_.get(this.settings, key))) {
       return _.get(this.settings, key);
     }
+    if (!_.isUndefined(_.get(this.defaults, key))) {
+      return _.get(this.defaults, key);
+    }
     return defaultValue;
   };
 
