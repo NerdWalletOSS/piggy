@@ -1,11 +1,13 @@
 #!/bin/bash
 
+set -x
+
 if [ `uname` = "Darwin" ]; then
   pushd extras/forwarder
   bundle install
   bundle exec pod install
   popd
-  
+
   xcodebuild -workspace extras/forwarder/forwarder.xcworkspace \
     -configuration Release \
     -scheme forwarder \
