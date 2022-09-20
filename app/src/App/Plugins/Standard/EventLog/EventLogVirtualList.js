@@ -1,11 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { css } from 'aphrodite/no-important';
-import VirtualList, {
-  CURRENT_VIRTUAL_LIST_TYPE,
-  VIRTUAL_LIST_TYPE,
-} from '@widgets/VirtualList';
+import VirtualList from '@widgets/VirtualList';
 import styles from './EventLogStyles';
 
 const EventLogVirtualList = React.memo(
@@ -23,69 +19,30 @@ const EventLogVirtualList = React.memo(
     innerWrapperStyle = {},
     outerWrapperStyle = {},
   }) => {
-    if (CURRENT_VIRTUAL_LIST_TYPE === VIRTUAL_LIST_TYPE.VIRTUOSO) {
-      const renderVirtuosoItem = (index) => (
-        <ItemType
-          rowClicked={eventHandler.rowClicked}
-          chipClicked={eventHandler.chipClicked}
-          markerClicked={eventHandler.markerClicked}
-          urlClicked={eventHandler.urlClicked}
-          markedItems={markedItems}
-          highlightedItems={highlightedItems}
-          selectedItemId={selectedItemId}
-          index={index}
-          data={events}
-        />
-      );
-
-      return (
-        <div className={css(styles.mainContainer)} style={outerWrapperStyle}>
-          <div className={css(styles.list)} style={innerWrapperStyle}>
-            <AutoSizer>
-              {({ height, width }) => (
-                <VirtualList
-                  ref={eventHandler.setVirtualListRef}
-                  style={{ width, height }}
-                  totalCount={count}
-                  item={renderVirtuosoItem}
-                  onPinChanged={pinToBottomChanged}
-                  disablePinToBottom={disablePinToBottom}
-                  overscanCount={overscanCount}
-                />
-              )}
-            </AutoSizer>
-          </div>
-        </div>
-      );
-    }
-
+    const renderVirtuosoItem = (index) => (
+      <ItemType
+        rowClicked={eventHandler.rowClicked}
+        chipClicked={eventHandler.chipClicked}
+        markerClicked={eventHandler.markerClicked}
+        urlClicked={eventHandler.urlClicked}
+        markedItems={markedItems}
+        highlightedItems={highlightedItems}
+        selectedItemId={selectedItemId}
+        index={index}
+        data={events}
+      />
+    );
     return (
       <div className={css(styles.mainContainer)} style={outerWrapperStyle}>
         <div className={css(styles.list)} style={innerWrapperStyle}>
-          <AutoSizer>
-            {({ height, width }) => (
-              <VirtualList
-                ref={eventHandler.setVirtualListRef}
-                itemType={ItemType}
-                itemData={events}
-                itemCount={count}
-                itemProps={{
-                  rowClicked: eventHandler.rowClicked,
-                  chipClicked: eventHandler.chipClicked,
-                  markerClicked: eventHandler.markerClicked,
-                  urlClicked: eventHandler.urlClicked,
-                  selectedItemId,
-                  markedItems,
-                  highlightedItems,
-                }}
-                width={width}
-                height={height}
-                overscanCount={overscanCount}
-                onPinChanged={pinToBottomChanged}
-                disablePinToBottom={disablePinToBottom}
-              />
-            )}
-          </AutoSizer>
+          <VirtualList
+            ref={eventHandler.setVirtualListRef}
+            totalCount={count}
+            item={renderVirtuosoItem}
+            onPinChanged={pinToBottomChanged}
+            disablePinToBottom={disablePinToBottom}
+            overscanCount={overscanCount}
+          />
         </div>
       </div>
     );
