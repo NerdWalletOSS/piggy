@@ -116,6 +116,7 @@ class VirtuosoVirtualList extends PureComponent {
         onWheel={this.handleMouseWheel}
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
+        react18ConcurrentRendering
         {...restProps}
       />
     );
