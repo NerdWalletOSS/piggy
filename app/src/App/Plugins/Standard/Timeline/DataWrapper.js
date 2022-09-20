@@ -32,14 +32,14 @@ export default function connectData(WrappedComponent) {
       );
     }
 
-    componentDidMount = () => {
+    componentDidMount() {
       global.ipc.events.on(
         TIMELINE_UPDATE_MESSAGE,
         this.handleTimelineUpdateMessage
       );
     };
 
-    componentWillUnmount = () => {
+    componentWillUnmount() {
       global.ipc.events.off(
         TIMELINE_UPDATE_MESSAGE,
         this.handleTimelineUpdateMessage
@@ -373,7 +373,7 @@ export default function connectData(WrappedComponent) {
       });
     };
 
-    render = () => {
+    render() {
       const wrappedProps = {
         ...this.props,
         ...this.state,

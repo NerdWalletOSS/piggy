@@ -20,9 +20,7 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { Toolbar, ToolbarIcon } from '@widgets/Toolbar';
 import PluginLayout from '@widgets/Plugin/PluginLayout';
 import ContextMenu from '@widgets/ContextMenu/ContextMenu';
-import SearchableDetailsPane, {
-  DETAILS_DISPLAY_TYPE,
-} from '@widgets/SearchableDetailsPane/SearchableDetailsPane';
+import SearchableDetailsPane from '@widgets/SearchableDetailsPane/SearchableDetailsPane';
 import { contextMenu } from '@lib/dom';
 import EventLogVirtualList from '@plugins/Standard/EventLog/EventLogVirtualList';
 import CrudList from '@widgets/CrudList/CrudList';
@@ -107,7 +105,7 @@ class EventLog extends PureComponent {
     };
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate(prevProps) {
     const { events: prevEvents } = prevProps;
     const { events } = this.props;
     const { detailsData } = this.state;
@@ -145,19 +143,9 @@ class EventLog extends PureComponent {
     });
   };
 
-  setVirtualListRef = (ref) => {
-    this.listRef = ref;
-    if (ref) {
-      ref.adjustScrollPosition();
-    }
-  };
-
   clearDataClicked = () => {
     const { clearData } = this.props;
     clearData();
-    if (this.listRef && this.listRef.reset) {
-      this.listRef.reset(); /* HACK for react-window */
-    }
     this.setState({
       urlModalData: null,
       detailsData: null,
@@ -176,31 +164,6 @@ class EventLog extends PureComponent {
     this.setState((prevState) => ({
       showDetailsSearch: !prevState.showDetailsSearch,
     }));
-  };
-
-  chipClicked = (args) => {
-    this.setDetailsData({
-      ...args,
-      detailsType: DETAILS_DISPLAY_TYPE.CHIP,
-      showTitle: true,
-    });
-  };
-
-  rowClicked = (args) => {
-    this.setDetailsData({
-      ...args,
-      detailsType: DETAILS_DISPLAY_TYPE.ROW,
-      showTitle: false,
-    });
-  };
-
-  markerClicked = (item) => {
-    const { toggleItemMark } = this.props;
-    toggleItemMark(item);
-  };
-
-  urlClicked = (logEntry) => {
-    this.setState({ urlModalData: logEntry });
   };
 
   closeUrlMenu = () => {
@@ -541,7 +504,6 @@ EventLog.propTypes = {
   toggleDeepFilter: PropTypes.func.isRequired,
   toggleExcludedLevel: PropTypes.func.isRequired,
   toggleExcludedType: PropTypes.func.isRequired,
-  toggleItemMark: PropTypes.func.isRequired,
   toggleMarkedOnly: PropTypes.func.isRequired,
   setFilterType: PropTypes.func.isRequired,
   updateFilter: PropTypes.func.isRequired,

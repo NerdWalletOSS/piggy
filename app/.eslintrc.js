@@ -63,6 +63,13 @@ module.exports = {
     'no-unused-expressions': 'off',
     'react/destructuring-assignment': 'off',
     'react/forbid-prop-types': 'off',
+    'react/function-component-definition': [
+      'error',
+      {
+        namedComponents: ['arrow-function'],
+        unnamedComponents: ['arrow-function'],
+      },
+    ],
     'react-hooks/exhaustive-deps': 'error',
     'react/jsx-filename-extension': 'off',
     'react/jsx-no-bind': 'off',

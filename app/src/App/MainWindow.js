@@ -136,7 +136,7 @@ class MainWindow extends Component {
     runUpdateMigrationsIfNecessary();
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     global.ipc.events.emit(
       '/client/setDeviceIdBlocklist',
       globalSettings.get('devices.blocklist', [])
@@ -154,7 +154,7 @@ class MainWindow extends Component {
     document.addEventListener('keydown', this.handleKeyPress, false);
   };
 
-  componentWillUnmount = () => {
+  componentWillUnmount() {
     this.saveSettings();
     document.removeEventListener('keydown', this.handleKeyPress, false);
     global.ipc.events.off(GET_SESSION_MESSAGE, this.handleGetSessionMessage);
@@ -173,7 +173,7 @@ class MainWindow extends Component {
     }
   };
 
-  componentDidUpdate = () => {
+  componentDidUpdate() {
     const { visiblePlugin } = this.state;
     globalSettings.set('mainWindow.visiblePlugin', visiblePlugin);
   };
@@ -212,10 +212,6 @@ class MainWindow extends Component {
       visiblePlugin: pluginName,
     });
   }
-
-  restoreWindow = () => {
-    global.ipc.mainWindow.maximize();
-  };
 
   maximizeWindow = () => {
     global.ipc.mainWindow.restore();
@@ -547,8 +543,8 @@ class MainWindow extends Component {
     return null;
   };
 
-  render = () => (
-    <div className={css(styles.AppChrome)}>
+  render() {
+    return <div className={css(styles.AppChrome)}>
       {this.renderUpdateCheckModal()}
       {this.renderTitleBar()}
       {this.renderIconMenu()}
@@ -557,8 +553,8 @@ class MainWindow extends Component {
         {this.renderPluginContent()}
       </div>
       <ToastContainer transition={Slide} />
-    </div>
-  );
+    </div>;
+  };
 }
 
 MainWindow.contextType = BackendContext;

@@ -27,11 +27,6 @@ class VirtuosoVirtualList extends PureComponent {
     }
   };
 
-  scrollToBottomAndPin = () => {
-    this.setPinToBottom(true);
-    this.scrollToBottom();
-  };
-
   scrollTo = (index, align) => {
     if (this.listRef.current && index > 0) {
       try {
@@ -51,13 +46,8 @@ class VirtuosoVirtualList extends PureComponent {
     this.scrollTo(totalCount - 1, 'end');
   };
 
-  componentDidUpdate = () => {
+  componentDidUpdate() {
     this.adjustScrollPosition();
-  };
-
-  reset = () => {
-    this.scrollToTop();
-    this.setState({ pinToBottom: true });
   };
 
   adjustScrollPosition = () => {
@@ -96,7 +86,7 @@ class VirtuosoVirtualList extends PureComponent {
     }
   };
 
-  render = () => {
+  render() {
     const {
       totalCount,
       overscanCount,

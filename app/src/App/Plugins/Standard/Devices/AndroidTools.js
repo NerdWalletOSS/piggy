@@ -45,11 +45,11 @@ export default class AndroidTools extends PureComponent {
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     this.updateConnectedDevices();
   };
 
-  componentDidUpdate = () => {
+  componentDidUpdate() {
     this.updateConnectedDevices();
   };
 
@@ -234,7 +234,7 @@ export default class AndroidTools extends PureComponent {
     this.setState({ autoConnect: value });
   };
 
-  render = () => {
+  render() {
     const { devices, reverses } = this.context;
     const { forwardedPorts } = this.props;
     const { deviceId, autoConnect } = this.state;

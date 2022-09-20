@@ -126,7 +126,7 @@ const ChromeDevTools = ({ url, targets, containerElementId }) => {
   if (!url) {
     return <NoTargetsAvailable />;
   }
-  return <></>;
+  return undefined;
 };
 
 ChromeDevTools.propTypes = {

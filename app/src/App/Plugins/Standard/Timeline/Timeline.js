@@ -84,6 +84,7 @@ class Timeline extends PureComponent {
     globalSettings.set('timeline.collapsedH', collapsedH);
   };
 
+  /* eslint-disable-next-line react/no-unused-class-component-methods */
   loadSettings = () => {
     this.setState({
       collapsedV: globalSettings.get('timeline.collapsedV', true),
@@ -503,7 +504,7 @@ class Timeline extends PureComponent {
     );
   };
 
-  render = () => {
+  render() {
     const { visible } = this.props;
 
     if (!visible) {

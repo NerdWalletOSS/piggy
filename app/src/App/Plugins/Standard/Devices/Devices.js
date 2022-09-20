@@ -77,7 +77,7 @@ export default class Devices extends PureComponent {
     </Toolbar>
   );
 
-  render = () => {
+  render() {
     const { showForwardedPortsModal, forwardedPorts } = this.state;
     const { visible } = this.props;
     if (!visible) {
