@@ -1,4 +1,4 @@
-/* global */
+/* eslint-disable import/no-import-module-exports */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';

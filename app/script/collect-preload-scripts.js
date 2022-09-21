@@ -26,10 +26,10 @@ const rmFile = (fn) => {
   if (fs.existsSync(fn)) {
     try {
       fs.rmSync(fn);
-    } catch (e) {}
+    } catch (e) { /* ignore */ }
     try {
       fs.unlinkSync(fn);
-    } catch (e) {}
+    } catch (e) { /* ignore */ }
   }
 };
 
