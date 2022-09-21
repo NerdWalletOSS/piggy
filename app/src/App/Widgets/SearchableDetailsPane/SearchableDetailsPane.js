@@ -8,6 +8,11 @@ import DetailsSearch from './DetailsSearch';
 import { styles } from './SearchableDetailsPaneStyles';
 import { searchConfigProps } from './SearchProps';
 
+export const DETAILS_DISPLAY_TYPE = {
+  ROW: 'row',
+  CHIP: 'chip',
+};
+
 const SearchableDetailsPane = React.memo(
   ({
     detailsData,

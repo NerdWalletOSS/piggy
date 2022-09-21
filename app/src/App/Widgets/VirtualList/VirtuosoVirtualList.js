@@ -46,9 +46,15 @@ class VirtuosoVirtualList extends PureComponent {
     this.scrollTo(totalCount - 1, 'end');
   };
 
+  /* eslint-disable-next-line react/no-unused-class-component-methods */
+  scrollToBottomAndPin = () => {
+    this.setPinToBottom(true);
+    this.scrollToBottom();
+  };
+
   componentDidUpdate() {
     this.adjustScrollPosition();
-  };
+  }
 
   adjustScrollPosition = () => {
     const { disablePinToBottom, totalCount } = this.props;
@@ -110,7 +116,7 @@ class VirtuosoVirtualList extends PureComponent {
         {...restProps}
       />
     );
-  };
+  }
 }
 
 VirtuosoVirtualList.propTypes = {

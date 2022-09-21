@@ -20,7 +20,9 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { Toolbar, ToolbarIcon } from '@widgets/Toolbar';
 import PluginLayout from '@widgets/Plugin/PluginLayout';
 import ContextMenu from '@widgets/ContextMenu/ContextMenu';
-import SearchableDetailsPane from '@widgets/SearchableDetailsPane/SearchableDetailsPane';
+import SearchableDetailsPane, {
+  DETAILS_DISPLAY_TYPE,
+} from '@widgets/SearchableDetailsPane/SearchableDetailsPane';
 import { contextMenu } from '@lib/dom';
 import EventLogVirtualList from '@plugins/Standard/EventLog/EventLogVirtualList';
 import CrudList from '@widgets/CrudList/CrudList';
@@ -128,7 +130,7 @@ class EventLog extends PureComponent {
         });
       }
     }
-  };
+  }
 
   onInputChange = () => {
     const filter = this.inputRef.current.value;
@@ -164,6 +166,35 @@ class EventLog extends PureComponent {
     this.setState((prevState) => ({
       showDetailsSearch: !prevState.showDetailsSearch,
     }));
+  };
+
+  /* eslint-disable-next-line react/no-unused-class-component-methods */
+  chipClicked = (args) => {
+    this.setDetailsData({
+      ...args,
+      detailsType: DETAILS_DISPLAY_TYPE.CHIP,
+      showTitle: true,
+    });
+  };
+
+  /* eslint-disable-next-line react/no-unused-class-component-methods */
+  rowClicked = (args) => {
+    this.setDetailsData({
+      ...args,
+      detailsType: DETAILS_DISPLAY_TYPE.ROW,
+      showTitle: false,
+    });
+  };
+
+  /* eslint-disable-next-line react/no-unused-class-component-methods */
+  markerClicked = (item) => {
+    const { toggleItemMark } = this.props;
+    toggleItemMark(item);
+  };
+
+  /* eslint-disable-next-line react/no-unused-class-component-methods */
+  urlClicked = (logEntry) => {
+    this.setState({ urlModalData: logEntry });
   };
 
   closeUrlMenu = () => {
@@ -505,6 +536,7 @@ EventLog.propTypes = {
   toggleExcludedLevel: PropTypes.func.isRequired,
   toggleExcludedType: PropTypes.func.isRequired,
   toggleMarkedOnly: PropTypes.func.isRequired,
+  toggleItemMark: PropTypes.func.isRequired,
   setFilterType: PropTypes.func.isRequired,
   updateFilter: PropTypes.func.isRequired,
 };
