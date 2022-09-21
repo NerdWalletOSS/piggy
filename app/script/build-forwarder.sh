@@ -11,7 +11,8 @@ if [ `uname` = "Darwin" ]; then
   xcodebuild -workspace extras/forwarder/forwarder.xcworkspace \
     -configuration Release \
     -scheme forwarder \
-    -derivedDataPath extras/forwarder/build/DerivedData | xcpretty && exit ${PIPESTATUS[0]}
+    -derivedDataPath extras/forwarder/build/DerivedData \
+    -verbose
   mkdir -p resources/mac/bin 2> /dev/null
   cp extras/forwarder/build/DerivedData/Build/Products/Release/forwarder resources/mac/bin/
 fi
