@@ -3,8 +3,8 @@
 set -x
 
 EXTRA_ARGS=
-if [[ ! -z $APPLE_API_KEY_ID ]]; then
-  EXTRA_ARGS="DEVELOPMENT_TEAM=${APPLE_API_KEY_ID}"
+if [[ ! -z $APPLE_DEVELOPMENT_TEAM ]]; then
+  EXTRA_ARGS="DEVELOPMENT_TEAM=${APPLE_DEVELOPMENT_TEAM}"
 fi
 
 if [ `uname` = "Darwin" ]; then
