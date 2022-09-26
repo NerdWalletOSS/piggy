@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import _ from 'lodash';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Text,
   TouchableHighlight,
@@ -23,9 +24,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ title, active, onPress }) => {
   const extendedStyle = active ? styles.buttonActive : undefined;
-  const internalOnPress = useCallback(() => {
-    onPress?.();
-  }, []);
+
   return (
     <TouchableHighlight
       underlayColor="#665c54"
@@ -124,6 +123,32 @@ const Http = () => {
   );
 };
 
+const Logging = () => {
+  const componentRef = useRef(null);
+
+  const handleReactComponent = useCallback(() => {
+    console
+      .logger('logging-test')
+      .debug('react component ref', componentRef.current);
+  }, [componentRef]);
+
+  const handleCircularReference = useCallback(() => {
+    const outer: any = { foo: 'bar' };
+    outer.baz = outer;
+    console.logger('logging-test').debug('circular reference', outer);
+  }, []);
+
+  return (
+    <View ref={componentRef} style={styles.feature}>
+      <Text style={[styles.featureTitle]}>logging</Text>
+      <View style={styles.featureButtonBar}>
+        <Button title="react component" onPress={handleReactComponent} />
+        <Button title="circular reference" onPress={handleCircularReference} />
+      </View>
+    </View>
+  );
+};
+
 export default () => (
   <SafeAreaView style={styles.container}>
     <ScrollView>
@@ -131,6 +156,7 @@ export default () => (
       <Feature name="bar" priority={2} colorHint="green" />
       <Feature name="baz" priority={3} colorHint="red" />
       <Http />
+      <Logging />
     </ScrollView>
   </SafeAreaView>
 );
