@@ -13,8 +13,8 @@
 echo "Patching Android Gradle files..."
 COMPILE_SDK_VERSION='31'
 TARGET_SDK_VERSION='31'
-BUILD_TOOLS_VERSION="30.0.3"
-GRADLE_PLUGIN_VERSION="classpath 'com.android.tools.build:gradle:7.0.4'"
+BUILD_TOOLS_VERSION="31.0.0"
+GRADLE_PLUGIN_VERSION="classpath 'com.android.tools.build:gradle:7.2.1'"
 MAVEN_REPOSITORIES="repositories {\n  google()\n  mavenCentral()\n}"
 APPCOMPAT_LIBRARY="implementation \"androidx.appcompat:appcompat:1.3.0\""
 
