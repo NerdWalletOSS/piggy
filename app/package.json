@@ -23,7 +23,7 @@
     "lodash": "^4.17.21",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "react-contenteditable": "^3.3.6",
-    "react-devtools-core": "^4.24.4",
+    "react-devtools-core": "^4.26.0",
     "url": "^0.11.0"
   },
   "devDependencies": {

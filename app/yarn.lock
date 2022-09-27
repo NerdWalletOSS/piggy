@@ -9340,10 +9340,10 @@ react-dev-utils@^12.0.0:
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
 
-react-devtools-core@^4.24.4:
-  version "4.24.4"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.24.4.tgz#adaa54569f87ce7c08384d12e0b35122a755cbae"
-  integrity sha512-jbX8Yqyq4YvFEobHyXVlGaH0Cs/+EOdb3PL911bxaR5BnzbB5TE4RFHC1iOgT4vRH3VxIIrVQ7lR9vsiFFCYCA==
+react-devtools-core@^4.26.0:
+  version "4.26.0"
+  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.26.0.tgz#d3d0f59d62ccf1ac03017a7e92f0fe71455019cc"
+  integrity sha512-OO0Q+vXtHYCXvRQ6elLiOUph3MjsCpuYktGTLnBpizYm46f8tAPuJKihGkwsceitHSJNpzNIjJaYHgX96CyTUQ==
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
