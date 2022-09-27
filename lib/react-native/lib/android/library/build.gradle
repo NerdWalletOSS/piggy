@@ -9,8 +9,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        classpath("com.android.tools.build:gradle:7.2.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:5.0.1")
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
     }
 
     allprojects {
@@ -35,13 +37,15 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
         resValue "string", "sdk_version_name", VERSION_NAME
         resValue "string", "sdk_version_code", ""+VERSION_CODE
         minSdkVersion 16
         targetSdkVersion 31
+        if (System.properties['os.arch'] == "aarch64") { ndkVersion = "24.0.8215888" }
+        else { ndkVersion = "21.4.7075529" }
         multiDexEnabled true
         testInstrumentationRunner 'com.nerdwallet.test.TestRunner'
     }

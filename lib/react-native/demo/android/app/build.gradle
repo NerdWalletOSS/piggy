@@ -1,11 +1,13 @@
 apply plugin: "com.android.application"
 apply plugin: 'kotlin-android'
 
+def ENABLE_HERMES = true
+
 project.ext.react = [
     bundleInDebug: false,
     bundleInRelease: true,
     nodeExecutableAndArgs: ["node"],
-    enableHermes: true,
+    enableHermes: ENABLE_HERMES,
     entryFile: "index.js",
     cliPath: "../../",
     root: "../../",
@@ -18,8 +20,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        classpath("com.android.tools.build:gradle:7.2.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:5.0.1")
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
     }
 
     allprojects {
@@ -35,12 +39,14 @@ apply from: "../../../node_modules/react-native/react.gradle"
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
         applicationId "com.nerdwallet.piggy.demo"
         minSdkVersion 21
         targetSdkVersion 31
+        if (System.properties['os.arch'] == "aarch64") { ndkVersion = "24.0.8215888" }
+        else { ndkVersion = "21.4.7075529" }
         multiDexEnabled true
         versionCode 1
         versionName "1.0"
@@ -86,9 +92,14 @@ android {
 }
 
 dependencies {
-    def hermesPath = "../../../node_modules/hermes-engine/android/"
-    debugImplementation files(hermesPath + "hermes-debug.aar")
-    releaseImplementation files(hermesPath + "hermes-release.aar")
+    if (ENABLE_HERMES) {
+        /* noinspection GradleDynamicVersion */
+        implementation("com.facebook.react:hermes-engine:+") {
+            exclude group:'com.facebook.fbjni'
+        }
+    } else {
+        implementation 'org.webkit:android-jsc-intl:+'
+    }
 
     implementation project(':react-native-piggy')
     implementation "com.facebook.react:react-native:+"
