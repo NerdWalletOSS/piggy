@@ -38,7 +38,7 @@ const EventLogVirtualList = React.memo(
           <VirtualList
             ref={eventHandler.setVirtualListRef}
             totalCount={count}
-            item={renderVirtuosoItem}
+            itemContent={renderVirtuosoItem}
             onPinChanged={pinToBottomChanged}
             disablePinToBottom={disablePinToBottom}
             overscanCount={overscanCount}
