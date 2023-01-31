@@ -1,13 +1,14 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import getPluginIntegrations from '@plugins/integrations';
+import serverProxy from '@app/ServerProxy';
 import eventFilter from './EventFilter';
 import EventFormatter from './EventFormatter';
 import { FILTER_TYPES } from './EventConstants';
 import { sortByTimestampAndId, formatItemType } from './utils';
 
 const MAX_ITEMS = 1500;
-const EVENT_NAME = '/ws/recv/eventLog/send';
+const EVENT_NAME = '/eventLog/send';
 
 export default function connectData(WrappedComponent) {
   return class extends Component {
@@ -47,11 +48,11 @@ export default function connectData(WrappedComponent) {
     }
 
     componentDidMount() {
-      global.ipc.events.on(EVENT_NAME, this.handleEventLogEvent);
+      serverProxy.onWs(EVENT_NAME, this.handleEventLogEvent);
     }
 
     componentWillUnmount() {
-      global.ipc.events.off(EVENT_NAME, this.handleEventLogEvent);
+      serverProxy.offWs(EVENT_NAME, this.handleEventLogEvent);
     }
 
     handleEventLogEvent = (event, message) => {

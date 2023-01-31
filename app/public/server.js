@@ -1,13 +1,14 @@
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
-const electron = require('electron');
-
-const { ipcMain } = electron;
 
 const app = express();
 require('express-ws')(app);
 
+const HTTP_REQUEST_TIMEOUT_MS = 30000;
+
+let running = false;
+let ipcProxy;
 let connections = {};
 let connectionId = 0;
 let requestId = 0;
@@ -17,13 +18,32 @@ let pendingMessages = [];
 
 app.use(bodyParser.json({ limit: '100mb' }));
 
-app.get('/session', (req, res) => {
-  const id = requestId++;
-  ipcMain.emit('/session/get', `${id}`);
-  ipcMain.once(`/session/get/${id}`, (event, data) => {
-    res.write(JSON.stringify(data));
+app.get('/api/*', (req, res) => {
+  /* hack off the `/api` prefix */
+  const url = req.url.substring('/api'.length);
+  const { method, params, query, headers } = req;
+  const data = { url, method, params, query, headers };
+  const id = `/http/get${url}/${requestId++}`;
+  ipcProxy.emitToRenderer('/http/get', id, data);
+  console.log(`server: emitting /http/get for ${url}`);
+  let timeoutId;
+  const sendResponse = (event, result) => {
+    console.log(`server: sending response for /http/get${url} with id=${id}`);
+    clearTimeout(timeoutId);
+    res.status(result.statusCode || 200);
+    res.write(JSON.stringify(result.data || {}));
     res.end();
-  });
+  };
+  timeoutId = setTimeout(() => {
+    console.warn(
+      `server: timeout waiting for response for /http/get${url} with id=${id}`
+    );
+    res.status(500);
+    res.write(JSON.stringify({ error: 'timeout' }));
+    res.end();
+    ipcProxy.offRenderer(id, sendResponse);
+  }, HTTP_REQUEST_TIMEOUT_MS);
+  ipcProxy.onceRenderer(id, sendResponse);
 });
 
 app.ws('/', (ws, req) => {
@@ -69,86 +89,109 @@ app.ws('/', (ws, req) => {
   console.log(
     `connected: ${address} with type=${type} deviceId=${deviceId} id=${id}`
   );
-  ipcMain.emit('/client/connected', client);
+  ipcProxy.emitToRenderer('/client/connected', client);
   ws.on('message', (message) => {
-    const parsed = JSON.parse(message);
-    if (parsed.name && parsed.data) {
+    const parsedMessage = JSON.parse(message);
+    if (parsedMessage.name && parsedMessage.data) {
       if (!paused) {
-        ipcMain.emit('/ws/recv', parsed);
+        const name =
+          parsedMessage.name[0] === '/'
+            ? parsedMessage.name
+            : `/${parsedMessage.name}`;
+        ipcProxy.emitToRenderer(`/ws/recv${name}`, parsedMessage);
       } else {
-        pendingMessages.push(parsed);
+        pendingMessages.push(parsedMessage);
       }
     }
   });
   ws.on('close', () => {
     delete connections[id];
-    ipcMain.emit('/client/disconnected', client);
+    ipcProxy.emitToRenderer('/client/disconnected', client);
   });
 });
 
-ipcMain.on('/ws/send', (event, { name, data }) => {
-  if (Object.keys(connections).length) {
-    const message = JSON.stringify({ name, data });
-    Object.values(connections).forEach((connection) =>
-      connection.socket.send(message)
-    );
-  } else {
-    console.warn(
-      'trying to send a websocket message, but no clients connected!'
-    );
-  }
-});
-
-ipcMain.on('/client/setDeviceIdBlocklist', (event, blocklist) => {
-  deviceIdBlocklist = blocklist || [];
-  console.log('updating blocklist', ...deviceIdBlocklist);
-  Object.keys(connections).forEach((key) => {
-    const connection = connections[key];
-    if (deviceIdBlocklist.indexOf(connection.info.deviceId) >= 0) {
-      console.warn(
-        `closing existing connection with deviceId=${connection.info.deviceId}`
+const registerRendererEvents = () => {
+  ipcProxy.onRenderer('/ws/send', (event, { name, data }) => {
+    if (Object.keys(connections).length) {
+      const message = JSON.stringify({ name, data });
+      Object.values(connections).forEach((connection) =>
+        connection.socket.send(message)
       );
-      connection.socket.close(1011, 'blocklisted');
-      delete connections[key];
-      ipcMain.emit('/client/disconnected', connection.info);
+    } else {
+      console.warn(
+        'trying to send a websocket message, but no clients connected!'
+      );
     }
   });
-});
 
-ipcMain.on('/server/pause', (event) => {
-  paused = true;
-  pendingMessages = [];
-  event.returnValue = true;
-  console.log('server paused.');
-});
-
-ipcMain.on('/server/resume', (event) => {
-  paused = false;
-  event.returnValue = true;
-  pendingMessages.forEach((message) => ipcMain.emit('/ws/recv', message));
-  pendingMessages = [];
-  console.log('server resumed');
-});
-
-ipcMain.on('/server/isPaused', (event) => {
-  console.log('server isPaused?', paused);
-  event.returnValue = paused;
-});
-
-ipcMain.on('/server/clear', (event) => {
-  pendingMessages = [];
-  event.returnValue = true;
-  console.log('pending messages cleared');
-});
-
-exports.start = () => {
-  try {
-    console.log('server starting...');
-    app.listen(8347, () => {
-      console.log('server started');
-      ipcMain.emit('/server/connected');
+  ipcProxy.onRenderer('/client/setDeviceIdBlocklist', (event, blocklist) => {
+    deviceIdBlocklist = blocklist || [];
+    console.log('updating blocklist', ...deviceIdBlocklist);
+    Object.keys(connections).forEach((key) => {
+      const connection = connections[key];
+      if (deviceIdBlocklist.indexOf(connection.info.deviceId) >= 0) {
+        console.warn(
+          `closing existing connection with deviceId=${connection.info.deviceId}`
+        );
+        connection.socket.close(1011, 'blocklisted');
+        delete connections[key];
+        ipcProxy.emitToRenderer('/client/disconnected', connection.info);
+      }
     });
-  } catch (err) {
-    console.log(err);
-  }
+  });
+
+  ipcProxy.onRenderer('/server/pause', (event) => {
+    paused = true;
+    pendingMessages = [];
+    event.returnValue = true;
+    console.log('server paused.');
+  });
+
+  ipcProxy.onRenderer('/server/resume', (event) => {
+    paused = false;
+    event.returnValue = true;
+    pendingMessages.forEach((message) =>
+      ipcProxy.emitToRenderer('/ws/recv', message)
+    );
+    pendingMessages = [];
+    console.log('server resumed');
+  });
+
+  ipcProxy.onRenderer('/server/isPaused', (event) => {
+    console.log('server isPaused?', paused);
+    event.returnValue = paused;
+  });
+
+  ipcProxy.onRenderer('/server/clear', (event) => {
+    pendingMessages = [];
+    event.returnValue = true;
+    console.log('pending messages cleared');
+  });
+};
+
+module.exports = {
+  init: (ipc) => {
+    ipcProxy = ipc;
+  },
+  start: () => {
+    if (running) {
+      console.log('server: already running.');
+      return;
+    }
+    if (!ipcProxy) {
+      console.error('server: please call init() first');
+      return;
+    }
+    try {
+      console.log('server starting...');
+      registerRendererEvents();
+      app.listen(8347, () => {
+        running = true;
+        console.log('server started');
+        ipcProxy.emitToRenderer('/server/connected');
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };

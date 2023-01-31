@@ -5,6 +5,7 @@ import { css } from 'aphrodite/no-important';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { flatten } from 'flat';
+import serverProxy from '@app/ServerProxy';
 import Button from '@widgets/Button/Button';
 import Modal from '@widgets/Modal/Modal';
 import Input from '@widgets/Input/Input';
@@ -15,7 +16,7 @@ import styles from './ReduxStyles';
 import { ReduxStateSliceItem } from './ReduxStateSliceItem';
 
 const SET_STATE_SUBSCRIPTIONS_PATHS_MESSAGE = '/stateSubscriptions/setPaths';
-const UPDATE_MESSAGE = '/ws/recv/stateSubscriptions/update';
+const UPDATE_MESSAGE = '/stateSubscriptions/update';
 
 const KEY_MAP = {
   NEW_SUBSCRIPTION: 'command+n',
@@ -64,11 +65,11 @@ export default class StateSubscriptions extends PureComponent {
   };
 
   componentDidMount() {
-    global.ipc.events.on(UPDATE_MESSAGE, this.handleUpdateMessage);
+    serverProxy.onWs(UPDATE_MESSAGE, this.handleUpdateMessage);
   }
 
   componentWillUnmount() {
-    global.ipc.events.off(UPDATE_MESSAGE, this.handleUpdateMessage);
+    serverProxy.offWs(UPDATE_MESSAGE, this.handleUpdateMessage);
   }
 
   toggleModal = () =>
@@ -168,15 +169,15 @@ export default class StateSubscriptions extends PureComponent {
     }
 
     const { subscriptions } = this.state;
-    const stateSubscriptionViews = Object.keys(
-      subscriptions
-    ).map((stateSubscriptionKey) => (
-      <ReduxStateSliceItem
-        subscriptions={subscriptions}
-        subscriptionKey={stateSubscriptionKey}
-        handleRemoveSubscription={this.handleRemoveSubscription}
-      />
-    ));
+    const stateSubscriptionViews = Object.keys(subscriptions).map(
+      (stateSubscriptionKey) => (
+        <ReduxStateSliceItem
+          subscriptions={subscriptions}
+          subscriptionKey={stateSubscriptionKey}
+          handleRemoveSubscription={this.handleRemoveSubscription}
+        />
+      )
+    );
 
     return (
       <GlobalHotKeys keyMap={KEY_MAP} handlers={this.keyHandlers}>

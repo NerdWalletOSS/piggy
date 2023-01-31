@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import serverProxy from '@app/ServerProxy';
 import _ from 'lodash';
 
 const IDLE_TIME_MS = 2000;
 const COLLAPSED_IDLE_DURATION_MS = 200;
-const TIMELINE_UPDATE_MESSAGE = '/ws/recv/timeline/send';
+const TIMELINE_UPDATE_MESSAGE = '/timeline/send';
 
 export const WORK_TYPE = {
   ACTIVE: 'active',
@@ -27,24 +28,23 @@ export default function connectData(WrappedComponent) {
         excludedGroups: new Set(),
         sessionId: null,
       };
-      this.handleTimelineUpdateMessage = this.handleTimelineUpdateMessage.bind(
-        this
-      );
+      this.handleTimelineUpdateMessage =
+        this.handleTimelineUpdateMessage.bind(this);
     }
 
     componentDidMount() {
-      global.ipc.events.on(
+      serverProxy.onWs(
         TIMELINE_UPDATE_MESSAGE,
         this.handleTimelineUpdateMessage
       );
-    };
+    }
 
     componentWillUnmount() {
-      global.ipc.events.off(
+      serverProxy.offWs(
         TIMELINE_UPDATE_MESSAGE,
         this.handleTimelineUpdateMessage
       );
-    };
+    }
 
     handleTimelineUpdateMessage(event, message) {
       const { data: incomingRawData, sessionId } = message;
@@ -381,6 +381,6 @@ export default function connectData(WrappedComponent) {
         clearData: this.clearData,
       };
       return <WrappedComponent ref={this.componentRef} {...wrappedProps} />;
-    };
+    }
   };
 }
