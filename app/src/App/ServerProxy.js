@@ -79,7 +79,7 @@ const unregister = (type, path, callback) => {
     }
     delete registry[SERVER_MESSAGE_TYPE.HTTP][sanitizedPath];
   } else if (type === SERVER_MESSAGE_TYPE.WEBSOCKET) {
-    const fullPath = `/ws/recv/${sanitizedPath}`;
+    const fullPath = `/ws/recv${sanitizedPath}`;
     registry[SERVER_MESSAGE_TYPE.WEBSOCKET][sanitizedPath] = _.filter(
       registry[SERVER_MESSAGE_TYPE.WEBSOCKET][sanitizedPath] || [],
       (e) => e.path !== sanitizedPath || e.callback !== callback
@@ -106,4 +106,12 @@ const offHttp = (path, callback) => {
   unregister(SERVER_MESSAGE_TYPE.HTTP, path, callback);
 };
 
-export default { onWs, offWs, onHttp, offHttp };
+const emitWs = (path, data = {}) => {
+  const sanitizedPath = sanitizePath(path);
+  global.ipc.events.emit('/ws/send', {
+    name: sanitizedPath,
+    data,
+  });
+};
+
+export default { emitWs, onWs, offWs, onHttp, offHttp };

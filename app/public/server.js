@@ -27,7 +27,7 @@ app.get('/api/*', (req, res) => {
   ipcProxy.emitToRenderer('/http/get', id, data);
   console.log(`server: emitting /http/get for ${url}`);
   let timeoutId;
-  const sendResponse = (event, result) => {
+  const sendResponse = (_event, result) => {
     console.log(`server: sending response for /http/get${url} with id=${id}`);
     clearTimeout(timeoutId);
     const statusCode = result.statusCode || 200;
@@ -51,9 +51,13 @@ app.get('/api/*', (req, res) => {
     console.warn(
       `server: timeout waiting for response for /http/get${url} with id=${id}`
     );
-    res.status(500);
-    res.write(JSON.stringify({ error: 'timeout' }));
-    res.end();
+    sendResponse(
+      {},
+      {
+        statusCode: 500,
+        data: { error: 'timeout' },
+      }
+    );
     ipcProxy.offRenderer(id, sendResponse);
   }, HTTP_REQUEST_TIMEOUT_MS);
   ipcProxy.onceRenderer(id, sendResponse);
