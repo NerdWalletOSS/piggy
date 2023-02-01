@@ -30,8 +30,21 @@ app.get('/api/*', (req, res) => {
   const sendResponse = (event, result) => {
     console.log(`server: sending response for /http/get${url} with id=${id}`);
     clearTimeout(timeoutId);
-    res.status(result.statusCode || 200);
-    res.write(JSON.stringify(result.data || {}));
+    const statusCode = result.statusCode || 200;
+    let { data: responseBody, contentType } = result;
+    if (!contentType) {
+      if (_.isObject(responseBody)) {
+        responseBody = JSON.stringify(responseBody);
+        contentType = 'application/json';
+      } else if (_.isString(responseBody)) {
+        responseBody = String(responseBody);
+        contentType = 'text/plain';
+      }
+    }
+    res
+      .type(contentType)
+      .status(statusCode)
+      .write(responseBody || '');
     res.end();
   };
   timeoutId = setTimeout(() => {
