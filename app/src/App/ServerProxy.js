@@ -24,10 +24,14 @@ const handleHttpMessage = async (_event, requestId, request) => {
     });
     return;
   }
-  const response = await handler.callback(request);
-  const statusCode = response.statusCode || 200;
-  const data = response.data || {};
-  global.ipc.events.emit(requestId, { statusCode, data });
+  let response = await handler.callback(request);
+  if (!response.data) {
+    response = {
+      data: response,
+      statusCode: 200,
+    };
+  }
+  global.ipc.events.emit(requestId, response);
 };
 
 const register = (type, path, callback) => {
