@@ -8,49 +8,25 @@ const url = require('url');
 const server = require('./server');
 
 let mainWindow; /* keep global reference; otherwise gc will close window */
-let serverStarted = false;
 
-function sendIpcEvent(name, message) {
-  if (mainWindow && mainWindow.webContents) {
-    mainWindow.webContents.send(name, message || {});
-  }
-}
-
-function startServer() {
-  if (serverStarted) {
-    return;
-  }
-
-  server.start();
-
-  ipcMain.on('/server/connected', () => {
-    serverStarted = true;
-    sendIpcEvent('/server/connected');
-  });
-
-  ipcMain.on('/session/get', (requestId) => {
-    sendIpcEvent('/session/get', requestId);
-  });
-
-  ipcMain.on('/server/disconnected', () => {
-    serverStarted = false;
-    sendIpcEvent('/server/disconnected');
-  });
-
-  ipcMain.on('/client/connected', (client) => {
-    sendIpcEvent('/client/connected', client);
-  });
-
-  ipcMain.on('/client/disconnected', (client) => {
-    serverStarted = true;
-    sendIpcEvent('/client/disconnected', client);
-  });
-
-  ipcMain.on('/ws/recv', (message) => {
-    const name = message.name[0] === '/' ? message.name : `/${message.name}`;
-    sendIpcEvent(`/ws/recv${name}`, message);
-  });
-}
+const ipcProxy = {
+  emitToRenderer: (...args) => {
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send(...args);
+    } else {
+      console.log('ipcProxy: mainWindow not ready');
+    }
+  },
+  onceRenderer: (...args) => {
+    ipcMain.once(...args);
+  },
+  onRenderer: (...args) => {
+    ipcMain.on(...args);
+  },
+  offRenderer: (...args) => {
+    ipcMain.off(...args);
+  },
+};
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -88,7 +64,8 @@ function createWindow() {
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
-    startServer();
+    server.init(ipcProxy);
+    server.start();
   });
 
   // Devtools for working on the devtool itself

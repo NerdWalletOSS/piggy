@@ -18,6 +18,7 @@ import ContextMenu from '@widgets/ContextMenu/ContextMenu';
 import Modal from '@widgets/Modal/Modal';
 import Button from '@widgets/Button/Button';
 import Tooltip from '@widgets/Tooltip/Tooltip';
+import serverProxy from '@app/ServerProxy';
 import { fileFilter } from '@lib/utils';
 import runMigrations from '@lib/migrations';
 import { contextMenu } from '@lib/dom';
@@ -29,7 +30,7 @@ import styles from './MainWindowStyles';
 const lastUpdateCheck = {};
 const logoIcon = require('./icon.png');
 
-const GET_SESSION_MESSAGE = '/session/get';
+const GET_SESSION_MESSAGE = '/session';
 
 const MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
 const UPDATE_CHECK_INTERVAL = MILLISECONDS_PER_HOUR * 1;
@@ -142,7 +143,7 @@ class MainWindow extends Component {
       globalSettings.get('devices.blocklist', [])
     );
 
-    global.ipc.events.on(GET_SESSION_MESSAGE, this.handleGetSessionMessage);
+    serverProxy.onHttp(GET_SESSION_MESSAGE, this.handleGetSessionMessage);
 
     this.setState({
       isPaused: global.ipc.events.sendSync('/server/isPaused'),
@@ -152,19 +153,19 @@ class MainWindow extends Component {
     this.runUpdateCheckIfNecessary();
 
     document.addEventListener('keydown', this.handleKeyPress, false);
-  };
+  }
 
   componentWillUnmount() {
     this.saveSettings();
     document.removeEventListener('keydown', this.handleKeyPress, false);
-    global.ipc.events.off(GET_SESSION_MESSAGE, this.handleGetSessionMessage);
-  };
+    serverProxy.offHttp(GET_SESSION_MESSAGE, this.handleGetSessionMessage);
+  }
 
-  handleGetSessionMessage(event, requestId) {
-    global.ipc.events.emit(
-      `/session/get/${requestId}`,
-      this.parseDataForExport()
-    );
+  handleGetSessionMessage() {
+    return {
+      statusCode: 200,
+      data: this.parseDataForExport(),
+    };
   }
 
   handleKeyPress = (event) => {
@@ -176,7 +177,7 @@ class MainWindow extends Component {
   componentDidUpdate() {
     const { visiblePlugin } = this.state;
     globalSettings.set('mainWindow.visiblePlugin', visiblePlugin);
-  };
+  }
 
   runUpdateCheckIfNecessary = async () => {
     const { disableUpdateCheckModal } = this.state;
@@ -544,17 +545,19 @@ class MainWindow extends Component {
   };
 
   render() {
-    return <div className={css(styles.AppChrome)}>
-      {this.renderUpdateCheckModal()}
-      {this.renderTitleBar()}
-      {this.renderIconMenu()}
-      <div className={css(styles.mainHorizontalStack)}>
-        {this.renderLeftMenu()}
-        {this.renderPluginContent()}
+    return (
+      <div className={css(styles.AppChrome)}>
+        {this.renderUpdateCheckModal()}
+        {this.renderTitleBar()}
+        {this.renderIconMenu()}
+        <div className={css(styles.mainHorizontalStack)}>
+          {this.renderLeftMenu()}
+          {this.renderPluginContent()}
+        </div>
+        <ToastContainer transition={Slide} />
       </div>
-      <ToastContainer transition={Slide} />
-    </div>;
-  };
+    );
+  }
 }
 
 MainWindow.contextType = BackendContext;

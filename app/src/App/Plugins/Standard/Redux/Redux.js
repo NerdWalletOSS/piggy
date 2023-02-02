@@ -5,6 +5,7 @@ import { css } from 'aphrodite/no-important';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { flatten } from 'flat';
+import serverProxy from '@app/ServerProxy';
 import Button from '@widgets/Button/Button';
 import Modal from '@widgets/Modal/Modal';
 import Input from '@widgets/Input/Input';
@@ -14,8 +15,10 @@ import { indexChildren } from '@lib/search';
 import styles from './ReduxStyles';
 import { ReduxStateSliceItem } from './ReduxStateSliceItem';
 
-const SET_STATE_SUBSCRIPTIONS_PATHS_MESSAGE = '/stateSubscriptions/setPaths';
-const UPDATE_MESSAGE = '/ws/recv/stateSubscriptions/update';
+const SERVER_WS_MESSAGE = {
+  SEND_PATHS_TO_CLIENT_MESSAGE: '/stateSubscriptions/setPaths',
+  DATA_UPDATED_FROM_CLIENT_MESSAGE: '/stateSubscriptions/update',
+};
 
 const KEY_MAP = {
   NEW_SUBSCRIPTION: 'command+n',
@@ -36,7 +39,7 @@ export default class StateSubscriptions extends PureComponent {
   }
 
   // Called when a subscription updates
-  handleUpdateMessage = (event, message) => {
+  handleUpdateMessage = (message) => {
     const { subscriptions } = this.state;
     const updatedSubscriptions = message.data;
     const mergedStateSubscriptions = { ...subscriptions };
@@ -64,11 +67,17 @@ export default class StateSubscriptions extends PureComponent {
   };
 
   componentDidMount() {
-    global.ipc.events.on(UPDATE_MESSAGE, this.handleUpdateMessage);
+    serverProxy.onWs(
+      SERVER_WS_MESSAGE.DATA_UPDATED_FROM_CLIENT_MESSAGE,
+      this.handleUpdateMessage
+    );
   }
 
   componentWillUnmount() {
-    global.ipc.events.off(UPDATE_MESSAGE, this.handleUpdateMessage);
+    serverProxy.offWs(
+      SERVER_WS_MESSAGE.DATA_UPDATED_FROM_CLIENT_MESSAGE,
+      this.handleUpdateMessage
+    );
   }
 
   toggleModal = () =>
@@ -85,14 +94,9 @@ export default class StateSubscriptions extends PureComponent {
 
   handleAddSubscription = () => {
     const { subscriptions, newSubscriptionPath } = this.state;
-
-    global.ipc.events.emit('/ws/send', {
-      name: SET_STATE_SUBSCRIPTIONS_PATHS_MESSAGE,
-      data: {
-        paths: [...Object.keys(subscriptions), newSubscriptionPath],
-      },
+    serverProxy.emitWs(SERVER_WS_MESSAGE.SEND_PATHS_TO_CLIENT_MESSAGE, {
+      paths: [...Object.keys(subscriptions), newSubscriptionPath],
     });
-
     this.toggleModal();
     this.clearNewSubscription();
   };
@@ -101,11 +105,8 @@ export default class StateSubscriptions extends PureComponent {
     const { subscriptions } = this.state;
     const remainingSubscriptions = _.omit(subscriptions, [subscriptionKey]);
     this.setState({ subscriptions: remainingSubscriptions }, () => {
-      global.ipc.events.emit('/ws/send', {
-        name: SET_STATE_SUBSCRIPTIONS_PATHS_MESSAGE,
-        data: {
-          paths: Object.keys(remainingSubscriptions),
-        },
+      serverProxy.emitWs(SERVER_WS_MESSAGE.SEND_PATHS_TO_CLIENT_MESSAGE, {
+        paths: Object.keys(remainingSubscriptions),
       });
     });
   };
@@ -168,15 +169,15 @@ export default class StateSubscriptions extends PureComponent {
     }
 
     const { subscriptions } = this.state;
-    const stateSubscriptionViews = Object.keys(
-      subscriptions
-    ).map((stateSubscriptionKey) => (
-      <ReduxStateSliceItem
-        subscriptions={subscriptions}
-        subscriptionKey={stateSubscriptionKey}
-        handleRemoveSubscription={this.handleRemoveSubscription}
-      />
-    ));
+    const stateSubscriptionViews = Object.keys(subscriptions).map(
+      (stateSubscriptionKey) => (
+        <ReduxStateSliceItem
+          subscriptions={subscriptions}
+          subscriptionKey={stateSubscriptionKey}
+          handleRemoveSubscription={this.handleRemoveSubscription}
+        />
+      )
+    );
 
     return (
       <GlobalHotKeys keyMap={KEY_MAP} handlers={this.keyHandlers}>
