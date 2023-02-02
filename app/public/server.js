@@ -18,6 +18,24 @@ let pendingMessages = [];
 
 app.use(bodyParser.json({ limit: '100mb' }));
 
+/**
+ * We allow the main window (and its plugins) to accept and respond to HTTP requests
+ * made against the server. This allows for programmatic control of `piggy`. For
+ * example, QA can use a `curl` request to dump a session log by hitting the
+ * `http://piggyip:8347/api/session` endpoint.
+ *
+ * This mechanism works by accepting all reqeusts against the `/api/*` path and
+ * emitting an `/http/get` event to the renderer process. Then, within the
+ * renderer process, `ServiceProxy` handles the message and dispatches it
+ * accordingly. The handler returns a response to `ServiceProxy`, which emits a
+ * response event to the server process. The server then responds to the inbound
+ * request with the provided data.
+ *
+ * By default, `ServiceProxy` will immediately return a 404 for requests that do
+ * not have registered handlers. There is also a hard-coded 30 second timeout for
+ * all requests; if there is a handler registered in `ServiceProxy`, but it takes
+ * longer than 30 seconds, its result will be ignored and an 500 is returned.
+ */
 app.get('/api/*', (req, res) => {
   /* hack off the `/api` prefix */
   const url = req.url.substring('/api'.length);
@@ -63,6 +81,20 @@ app.get('/api/*', (req, res) => {
   ipcProxy.onceRenderer(id, sendResponse);
 });
 
+/**
+ * Start up a WebSocket server for bi-directional communication between piggy
+ * and an external (generally mobile) application. Every message sent and
+ * retrieved should have the following structure:
+ *
+ * Messages received from the external application are sent to the renderer
+ * process via `/ws/recv` event, and are handled in `ServiceProxy` like they
+ * are for HTTP requests.
+ *
+ * {
+ *   name: '/slash/delimited/message/name',
+ *   data: { ...plain json object with any shape you want }
+ * }
+ */
 app.ws('/', (ws, req) => {
   const deviceId = (req.query && req.query.deviceId) || 'unknown';
   if (deviceIdBlocklist.indexOf(deviceId) >= 0) {
@@ -111,11 +143,7 @@ app.ws('/', (ws, req) => {
     const parsedMessage = JSON.parse(message);
     if (parsedMessage.name && parsedMessage.data) {
       if (!paused) {
-        const name =
-          parsedMessage.name[0] === '/'
-            ? parsedMessage.name
-            : `/${parsedMessage.name}`;
-        ipcProxy.emitToRenderer(`/ws/recv${name}`, parsedMessage);
+        ipcProxy.emitToRenderer(`/ws/recv`, parsedMessage);
       } else {
         pendingMessages.push(parsedMessage);
       }
@@ -127,7 +155,19 @@ app.ws('/', (ws, req) => {
   });
 });
 
+/**
+ * We allow the renderer process (i.e. the app window) very basic control of the
+ * servers we run, so we can expose UI for pausing input or establishing client
+ * blocklists. We also provide a message that can be used for the app to send
+ * WebSocket messages to the connected app.
+ *
+ * Here, we register for those events once the main window becomes available.
+ */
 const registerRendererEvents = () => {
+  /**
+   * This is a generic message that the main window can use to send a WebSocket
+   * message to the connected external (mobile) app.
+   */
   ipcProxy.onRenderer('/ws/send', (event, { name, data }) => {
     if (Object.keys(connections).length) {
       const message = JSON.stringify({ name, data });
@@ -141,6 +181,11 @@ const registerRendererEvents = () => {
     }
   });
 
+  /**
+   * In QA environments there are sometimes multiple devices that connected to
+   * the same machine, and sometimes they should be excluded from using the app.
+   * The client can tell us which devices to ignore.
+   */
   ipcProxy.onRenderer('/client/setDeviceIdBlocklist', (event, blocklist) => {
     deviceIdBlocklist = blocklist || [];
     console.log('updating blocklist', ...deviceIdBlocklist);
@@ -157,6 +202,12 @@ const registerRendererEvents = () => {
     });
   });
 
+  /**
+   * The following are for general server-level control: pausing, resuming, and
+   * clearing the active session. The user in the app may be debugging something
+   * and want to pause further UI updates so they can inspect the state of their
+   * tools, so we provide a mechanism to do this.
+   */
   ipcProxy.onRenderer('/server/pause', (event) => {
     paused = true;
     pendingMessages = [];

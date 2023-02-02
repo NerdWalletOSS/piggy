@@ -55,7 +55,7 @@ export default function connectData(WrappedComponent) {
       serverProxy.offWs(EVENT_NAME, this.handleEventLogEvent);
     }
 
-    handleEventLogEvent = (event, message) => {
+    handleEventLogEvent = (message) => {
       const { sessionId } = message;
       const { sessionId: currentSessionId } = this.state;
       if (currentSessionId !== sessionId) {

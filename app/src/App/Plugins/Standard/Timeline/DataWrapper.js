@@ -46,7 +46,7 @@ export default function connectData(WrappedComponent) {
       );
     }
 
-    handleTimelineUpdateMessage(event, message) {
+    handleTimelineUpdateMessage(message) {
       const { data: incomingRawData, sessionId } = message;
       const { sessionId: currentSessionId } = this.state;
       if (sessionId !== currentSessionId) {

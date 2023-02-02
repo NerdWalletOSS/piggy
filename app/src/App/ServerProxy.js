@@ -1,10 +1,24 @@
 import _ from 'lodash';
 
+/**
+ * `ServerProxy` is a module used by the renderer process to communicate with
+ * the server process via message passing. It acts as a centralized hub and
+ * repository for plugins to register themselves as HTTP request and WebSocket
+ * message handlers.
+ *
+ * All renderer code should use this proxy to register for messages instead of
+ * directly listening to `/ws/recv` and `/http/get` to ensure consistent
+ * event handling semantics are followed.
+ */
+
 const SERVER_MESSAGE_TYPE = {
   WEBSOCKET: 'websocket',
   HTTP: 'http',
 };
 
+/**
+ * All registered handlers.
+ */
 const registry = {
   /* we can have multiple handlers for websocket messages, as they
   may be informative broadcasts */
@@ -34,10 +48,15 @@ const handleHttpMessage = async (_event, requestId, request) => {
   global.ipc.events.emit(requestId, response);
 };
 
+const handleWebSocketMessage = async (_event, request) => {
+  console.log(request);
+  const handlers = registry[SERVER_MESSAGE_TYPE.WEBSOCKET][request.name] || [];
+  handlers.forEach((h) => h.callback(request));
+};
+
 const register = (type, path, callback) => {
   const sanitizedPath = sanitizePath(path);
   if (type === SERVER_MESSAGE_TYPE.WEBSOCKET) {
-    const fullPath = `/ws/recv${sanitizedPath}`;
     const handlers =
       registry[SERVER_MESSAGE_TYPE.WEBSOCKET][sanitizedPath] || [];
     const existing = _.find(
@@ -52,7 +71,6 @@ const register = (type, path, callback) => {
     }
     handlers.push({ path: sanitizedPath, callback });
     registry[SERVER_MESSAGE_TYPE.WEBSOCKET][sanitizedPath] = handlers;
-    global.ipc.events.on(fullPath, callback);
   } else if (type === SERVER_MESSAGE_TYPE.HTTP) {
     if (registry[SERVER_MESSAGE_TYPE.HTTP][sanitizedPath]) {
       console.error(`${type} message for ${sanitizedPath} already registered.`);
@@ -93,6 +111,7 @@ const unregister = (type, path, callback) => {
 };
 
 global.ipc.events.on('/http/get', handleHttpMessage);
+global.ipc.events.on('/ws/recv', handleWebSocketMessage);
 
 const onWs = (path, callback) => {
   register(SERVER_MESSAGE_TYPE.WEBSOCKET, path, callback);

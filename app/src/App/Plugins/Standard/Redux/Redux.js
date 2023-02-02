@@ -39,7 +39,7 @@ export default class StateSubscriptions extends PureComponent {
   }
 
   // Called when a subscription updates
-  handleUpdateMessage = (_event, message) => {
+  handleUpdateMessage = (message) => {
     const { subscriptions } = this.state;
     const updatedSubscriptions = message.data;
     const mergedStateSubscriptions = { ...subscriptions };
