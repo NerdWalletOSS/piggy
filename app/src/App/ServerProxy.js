@@ -49,7 +49,6 @@ const handleHttpMessage = async (_event, requestId, request) => {
 };
 
 const handleWebSocketMessage = async (_event, request) => {
-  console.log(request);
   const handlers = registry[SERVER_MESSAGE_TYPE.WEBSOCKET][request.name] || [];
   handlers.forEach((h) => h.callback(request));
 };
