@@ -27,7 +27,7 @@ public final class PiggyModule: RCTEventEmitter {
 
     @objc(start: workName: workId: priority:)
     func start(stopwatch: String, workName: String, workId: String, priority: Double) {
-        Piggy.instance.start(stopwatch: stopwatch, workName: workName, workId: workId, priority: priority)
+        Piggy.instance.start(stopwatch: stopwatch, workName: workName, workId: workId, priority: Int(priority))
     }
 
     @objc(stop: workId: context:)
@@ -42,7 +42,7 @@ public final class PiggyModule: RCTEventEmitter {
 
     @objc(record: workName: workId: start: end: priority: context:)
     func record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Double, context: [String:Any] = Piggy.defaultStopwatchContext) {
-        Piggy.instance.record(stopwatch: stopwatch, workName: workName, workId: workId, start: start, end: end, priority: priority, context: context)
+        Piggy.instance.record(stopwatch: stopwatch, workName: workName, workId: workId, start: start, end: end, priority: Int(priority), context: context)
     }
 
     @objc

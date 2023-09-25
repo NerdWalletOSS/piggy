@@ -145,6 +145,16 @@ const styles = StyleSheet.create({
       backgroundColor: overlayColor(colors.background, 0.15),
     },
   },
+  groupTitleText: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  groupTitlePriority: {
+    marginRight: 12,
+    fontSize: '75%',
+  },
 });
 
 const createActiveBarStyle = (color) => ({

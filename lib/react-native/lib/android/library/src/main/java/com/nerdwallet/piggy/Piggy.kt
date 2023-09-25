@@ -20,7 +20,7 @@ class Piggy private constructor(context: ReactApplicationContext) {
     private var unfinishedStopwatches = mutableListOf<Stopwatch>()
     private var pendingStopwatches = mutableListOf<Stopwatch>()
     private var pendingEvents = mutableListOf<ReadableMap>()
-    private var nameToPriority = mutableMapOf<String, Double>()
+    private var nameToPriority = mutableMapOf<String, Int>()
     private var hostnameOverride: String? = null
     private var forceEnabled: Boolean = false
     private val prefs = context.getSharedPreferences("timeliner", Context.MODE_PRIVATE)
@@ -104,7 +104,7 @@ class Piggy private constructor(context: ReactApplicationContext) {
         create(stopwatch, options.toMap())
     }
 
-    fun start(stopwatch: String, workName: String, workId: String, priority: Double) {
+    fun start(stopwatch: String, workName: String, workId: String, priority: Int) {
         synchronized(this) {
             if (enabled) {
                 ensure(stopwatch, priority).startWork(workName, workId)
@@ -134,10 +134,10 @@ class Piggy private constructor(context: ReactApplicationContext) {
         }
     }
 
-    fun record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Double, context: String) =
+    fun record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Int, context: String) =
         record(stopwatch, workName, workId, start, end, priority, mapOf("value" to context))
 
-    fun record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Double, context: Map<String, Any?>) {
+    fun record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Int, context: Map<String, Any?>) {
         synchronized(this) {
             if (enabled) {
                 ensure(stopwatch, priority).recordWork(workName, workId, start.toLong(), end.toLong(), context)
@@ -145,7 +145,6 @@ class Piggy private constructor(context: ReactApplicationContext) {
             }
         }
     }
-
 
     fun setConfiguration(options: ReadableMap, promise: Promise) {
         synchronized(this) {
@@ -387,7 +386,7 @@ class Piggy private constructor(context: ReactApplicationContext) {
         }
     }
 
-    private fun ensure(name: String, priority: Double? = null): Stopwatch {
+    private fun ensure(name: String, priority: Int? = null): Stopwatch {
         val resolvedPriority = when (priority) {
             null -> nameToPriority[name] ?: Default.PRIORITY
             else -> priority
@@ -403,7 +402,7 @@ class Piggy private constructor(context: ReactApplicationContext) {
 
     private fun find(name: String): Stopwatch? = unfinishedStopwatches.find { it.name == name }
 
-    private class Stopwatch(@Expose val name: String, @Expose val priority: Double) {
+    private class Stopwatch(@Expose val name: String, @Expose val priority: Int) {
         @Expose var workUnits = mutableListOf<Work>()
         @Expose var colorHint: String? = null
 
@@ -509,7 +508,7 @@ class Piggy private constructor(context: ReactApplicationContext) {
 
     private object Default {
         const val MAX_PENDING_EVENTS = 250
-        const val PRIORITY = 1000.0
+        const val PRIORITY = 10000
         val HOST = if (isEmulator) "10.0.2.2:8347" else "127.0.0.1:8347"
         val HTTP_CLIENT = OkHttpClient()
 
