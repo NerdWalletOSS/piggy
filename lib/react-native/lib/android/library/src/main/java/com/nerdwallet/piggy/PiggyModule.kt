@@ -22,7 +22,7 @@ class PiggyModule(private val context: ReactApplicationContext) : ReactContextBa
     @ReactMethod
     @Suppress("unused")
     fun start(stopwatch: String, workName: String, workId: String, priority: Double) {
-        instance.start(stopwatch, workName, workId, priority)
+        instance.start(stopwatch, workName, workId, priority.toInt())
     }
 
     @ReactMethod
@@ -40,7 +40,7 @@ class PiggyModule(private val context: ReactApplicationContext) : ReactContextBa
     @ReactMethod
     @Suppress("unused")
     fun record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Double, context: ReadableMap) {
-        instance.record(stopwatch, workName, workId, start, end, priority, context.toMap())
+        instance.record(stopwatch, workName, workId, start, end, priority.toInt(), context.toMap())
     }
 
     @ReactMethod

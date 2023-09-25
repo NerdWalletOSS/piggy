@@ -3,7 +3,7 @@ import React
 import Starscream
 
 private enum Constants {
-    static let DefaultPriority: Double = 1000.0
+    static let DefaultPriority: Int = 10000
     static let MaxPendingEvents = 250
 
     enum Url {
@@ -164,7 +164,7 @@ public class Piggy: NSObject {
     private var sessionId: Int64 = 0
     private var uniqueId = AtomicInteger()
     private var webSocket: WebSocket?
-    private var nameToPriority = [String: Double]()
+    private var nameToPriority = [String: Int]()
     private var buildType = BuildType.Production
     private var enabledByDefault = false
     private var forceEnabled = false
@@ -262,7 +262,7 @@ public class Piggy: NSObject {
     }
 
     @objc
-    public func start(stopwatch: String, workName: String, workId: String, priority: Double) {
+    public func start(stopwatch: String, workName: String, workId: String, priority: Int) {
         if !enabled {
             return
         }
@@ -296,7 +296,7 @@ public class Piggy: NSObject {
     }
 
     @objc
-    public func record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Double, context: [String: Any] = defaultStopwatchContext) {
+    public func record(stopwatch: String, workName: String, workId: String, start: Double, end: Double, priority: Int, context: [String: Any] = defaultStopwatchContext) {
         if !enabled {
             return
         }
@@ -564,12 +564,12 @@ public class Piggy: NSObject {
         }
     }
 
-    private func resolvePriority(_ name: String) -> Double {
+    private func resolvePriority(_ name: String) -> Int {
         let last = nameToPriority[name]
         return last != nil ? last! : Constants.DefaultPriority
     }
 
-    private func ensure(_ name: String, priority: Double? = nil) -> Stopwatch {
+    private func ensure(_ name: String, priority: Int? = nil) -> Stopwatch {
         let resolvedPriority = priority != nil ? priority! : resolvePriority(name)
         var stopwatch = activeStopwatches.first { $0.name == name }
         if stopwatch == nil {
@@ -689,11 +689,11 @@ private class Work {
 
 private class Stopwatch {
     let name: String
-    let priority: Double
+    let priority: Int
     var colorHint: String?
     var workUnits: [Work] = Array()
 
-    init(_ name: String, priority: Double) {
+    init(_ name: String, priority: Int) {
         self.name = name
         self.priority = priority
     }

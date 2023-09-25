@@ -317,7 +317,12 @@ class Timeline extends PureComponent {
                   this.toggleStopwatchExpandedState(stopwatch.name)
                 }
               >
-                {stopwatch.name}
+                <div className={css(styles.groupTitleText)}>
+                  <div>{stopwatch.name}</div>
+                  <div
+                    className={css(styles.groupTitlePriority)}
+                  >{`[priority: ${stopwatch.priority}]`}</div>
+                </div>
               </div>
               <div className={css(styles.barGroup)}>{bars}</div>
             </div>
@@ -531,7 +536,7 @@ class Timeline extends PureComponent {
         </PluginLayout>
       </GlobalHotKeys>
     );
-  };
+  }
 }
 
 Timeline.propTypes = {
